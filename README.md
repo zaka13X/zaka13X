@@ -1,1 +1,1 @@
-![Profile Views](https://komarev.com/ghpvc/?username=zaka13X) Hey there :3, I make websites, pro*ys and other stuff, Happy to see you here :)
+![Profile Views](https://komarev.com/ghpvc/?username=zaka13X) Hey there :3, I make websites, pro*ys and other stuff, Happy to see you here :), My strengths are HTML, CSS, JavaScript and some others :)
