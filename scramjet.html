@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>about:blank#blocked</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: linear-gradient(135deg, #0f2b46, #1b5286, #2176c7);
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+
+        /* Particle Container */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10px) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(105vh) translateX(20px);
+                opacity: 0;
+            }
+        }
+
+        /* Content Card */
+        .content-card {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #fff;
+            transition: transform 0.2s;
+        }
+
+        .logo:hover {
+            transform: scale(1.1);
+        }
+
+        .description {
+            color: #d1d8e0;
+            font-size: 1rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        /* GO Button */
+        .go-button {
+            background-color: #000000;
+            color: #ffffff;
+            border: 2px solid #ffffff;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .go-button:hover {
+            background-color: #ffffff;
+            color: #000000;
+            box-shadow: 0 0 15px #ffffff;
+        }
+
+        /* Message */
+        #message {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: normal;
+            min-height: 28px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Animated Particles -->
+    <div class="particles" id="particles-container"></div>
+
+    <!-- Main Card -->
+    <div class="content-card">
+       
+            <img src="https://raw.githubusercontent.com/MercuryWorkshop/scramjet/main/assets/scramjet.png" alt="Logo" class="logo">
+        </a>
+        
+        <p class="description">Scramjet is a ultra sophisticated web unb*cker, mostly better than Ultraviolet, it however may fail at CAPTCHAs, if it does try Ultraviolet., It works on most sites, like YouTube, Twitch, Discord (partial) and others.</p>
+        
+        <button class="go-button" onclick="startRedirect()">GO</button>
+        
+        <h1 id="message"></h1>
+    </div>
+
+    <!-- Redirect Script -->
+    <script>
+        function startRedirect() {
+            const messageElement = document.getElementById("message");
+            messageElement.textContent = "Redirecting...";
+            
+            setTimeout(function () {
+                window.location.href = "/scramjet";
+            }, 2000);
+        }
+
+        // Particle Generator Script
+        const container = document.getElementById('particles-container');
+        const particleCount = 45; // Adjust amount of particles here
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            
+            // Random styling for variety
+            const size = Math.random() * 5 + 2; // size between 2px and 7px
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.animationDuration = `${Math.random() * 5 + 5}s`; // 5 to 10 seconds
+            particle.style.animationDelay = `${Math.random() * 5}s`;
+            
+            container.appendChild(particle);
+        }
+    </script>
+</body>
+</html>
