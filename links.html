@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Generator</title>
+    <style>
+        /* Base styles and dark blue background */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, #0B1D3A 0%, #040A17 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Particle Background Animation */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100px) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 3rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            width: 90%;
+            max-width: 500px;
+        }
+
+        h1 {
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Button Style */
+        button {
+            background: linear-gradient(135deg, #0077ff, #00d2ff);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 2rem;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 119, 255, 0.6);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* Result Display Section */
+        .result-box {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 1.5rem;
+            border-radius: 10px;
+            min-height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        a.hidden-link {
+            color: #00d2ff;
+            text-decoration: none;
+            font-size: 1.2rem;
+            word-break: break-all;
+            display: none; /* Hides the actual URL initially */
+        }
+
+        .placeholder-text {
+            color: #88a0c0;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Particle Container -->
+    <div class="particles" id="particles-container"></div>
+
+    <!-- Main Generator UI -->
+    <div class="container">
+        <h1>Link Generator</h1>
+        <button onclick="getRandomLink()">Random Link</button>
+        
+        <div class="result-box">
+            <span class="placeholder-text" id="placeholder">No link generated yet</span>
+            <a href="#" id="actual-link" class="hidden-link" target="_blank" rel="noopener noreferrer">Visit Link</a>
+        </div>
+    </div>
+
+    <!-- JavaScript for Functionality -->
+    <script>
+        // 11 Sections of Possible Links (PLACEHOLDER URLs)
+        const links = [
+            "https://zaka13x.onrender.com",
+            "https://example.com",
+            "https://example.com",
+            "https://example.com",
+            "https://example.com",
+            "https://example.com",
+            "https://example.com",
+            "https://example.com",
+            "https://example.com",
+            "https://example.com0",
+            
+        ];
+
+        // Function to pick a random link
+        function getRandomLink() {
+            const randomIndex = Math.floor(Math.random() * links.length);
+            const selectedUrl = links[randomIndex];
+
+            const linkElement = document.getElementById("actual-link");
+            const placeholderElement = document.getElementById("placeholder");
+
+            // Reveal and update the link
+            linkElement.href = selectedUrl;
+            linkElement.textContent = "Click to visit: " + selectedUrl.substring(8, 20) + "..."; // Hides part of the URL visually
+            linkElement.style.display = "block";
+
+            // Hide the placeholder
+            placeholderElement.style.display = "none";
+        }
+
+        // JavaScript to generate the white floating background particles
+        const particlesContainer = document.getElementById("particles-container");
+        const particleCount = 40;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement("div");
+            particle.classList.add("particle");
+
+            // Randomize sizing, horizontal starting position, and animation duration
+            const size = Math.random() * 5 + 1;
+            const leftPosition = Math.random() * 100;
+            const animationDuration = Math.random() * 8 + 4;
+            const delay = Math.random() * 5;
+
+            particle.style.width = size + "px";
+            particle.style.height = size + "px";
+            particle.style.left = leftPosition + "%";
+            particle.style.animationDuration = animationDuration + "s";
+            particle.style.animationDelay = delay + "s";
+
+            particlesContainer.appendChild(particle);
+        }
+    </script>
+</body>
+</html>
