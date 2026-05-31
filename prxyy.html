@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Enhanced Proxy Browser</title>
+
+<!-- Scripts & Styles -->
+<link rel="stylesheet" href="style/global.css" />
+<link rel="stylesheet" href="style/browser.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+@import url("https://fonts.googleapis.com");
+@font-face { font-family: "Good Timing Rg"; src: url("/_a/font/good-timing-bd.otf") format("opentype"); font-weight: normal; font-style: normal; }
+
+body, html { background-color: #121212; color: #eee; font-family: 'Inter', "DM Sans", sans-serif; margin: 0; padding: 0; width: 100vw; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+#browser-header { display: flex; align-items: center; background-color: #0a0a0a; border-bottom: 1px solid #1a1a1a; padding: 10px 15px; gap: 15px; height: 50px; }
+#tab-list { display: flex; flex-grow: 1; gap: 5px; overflow-x: auto; align-items: center; }
+#tab-list::-webkit-scrollbar { display: none; }
+
+.tab-item { position: relative; background-color: #121212; color: #888; padding: 8px 16px; border-radius: 6px 6px 0 0; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; border: 1px solid transparent; transition: all 0.2s ease; }
+.tab-item.selectedTab { background-color: #1e1e1e; color: #fff; border-color: #2a2a2a; border-bottom-color: #1e1e1e; }
+.tab-item:hover:not(.selectedTab) { background-color: rgba(26, 26, 26, 0.15) !important; }
+.tab-close { font-size: 12px; color: #666; transition: color 0.2s; }
+.tab-close:hover { color: #b80c00; }
+
+#controls { display: flex; gap: 10px; }
+#controls button { background-color: #1e1e1e; border: 1px solid #333; color: #ccc; padding: 8px 12px; border-radius: 4px; cursor: pointer; position: relative; transition: all 0.2s; }
+#controls button:hover { color: #ffffff; background-color: #b80c00; border-color: #b80c00; transform: translateY(-3px); }
+
+.tooltip { visibility: hidden; opacity: 0; position: absolute; background-color: #000; color: #fff; padding: 4px 8px; font-size: 11px; border-radius: 4px; top: 35px; left: 50%; transform: translateX(-50%); transition: opacity 0.2s; white-space: nowrap; pointer-events: none; }
+button:hover .tooltip { visibility: visible; opacity: 1; top: 32px; }
+
+#url-bar-container { background-color: #121212; padding: 10px; display: flex; justify-content: center; align-items: center; border-bottom: 1px solid #2a2a2a; gap: 10px; }
+#url-bar { width: 65%; padding: 10px 15px; border-radius: 20px; background-color: #1e1e1e; border: 1px solid #333; color: #fff; outline: none; text-align: center; }
+#url-bar:focus { border-color: #b80c00; }
+
+#settings-btn { background-color: #1e1e1e; color: #eee; border: 1px solid #333; padding: 10px 15px; border-radius: 20px; cursor: pointer; transition: 0.2s; }
+#settings-btn:hover { background-color: #b80c00; border-color: #b80c00; }
+
+/* Modal Styling */
+.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); align-items: center; justify-content: center; }
+.modal.show { display: flex; }
+.settings-card { background-color: #1e1e1e; padding: 20px; border-radius: 8px; width: 400px; border: 1px solid #333; }
+.settings-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.close-btn { background: none; border: none; color: #888; font-size: 20px; cursor: pointer; }
+.close-btn:hover { color: #b80c00; }
+.section-title { font-weight: bold; margin-bottom: 10px; color: #ccc; }
+.options-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.options-list label { background-color: #2a2a2a; padding: 10px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+.options-list input[type="radio"] { accent-color: #b80c00; }
+.custom-input-group { display: flex; gap: 10px; }
+.custom-input-group input { flex-grow: 1; padding: 8px; border-radius: 4px; background-color: #2a2a2a; border: 1px solid #444; color: #fff; }
+.custom-input-group button { padding: 8px 12px; background-color: #b80c00; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+iframe { width: 100%; flex-grow: 1; border: none; background-color: #fff; }
+</style>
+</head>
+<body>
+
+<!-- Browser Header -->
+<header id="browser-header">
+    <div id="tab-list">
+        <!-- Tabs will be dynamically injected here -->
+    </div>
+    <div id="controls">
+        <button onclick="document.getElementById('browser-frame').contentWindow.history.back()">
+            <i class="fas fa-arrow-left"></i> <span class="tooltip">Back</span>
+        </button>
+        <button onclick="document.getElementById('browser-frame').contentWindow.history.forward()">
+            <i class="fas fa-arrow-right"></i> <span class="tooltip">Forward</span>
+        </button>
+        <button onclick="location.reload()">
+            <i class="fas fa-sync-alt"></i> <span class="tooltip">Reload</span>
+        </button>
+    </div>
+</header>
+
+<!-- URL Bar and Settings -->
+<div id="url-bar-container">
+    <input type="text" id="url-bar" placeholder="Search or enter URL" />
+    <button id="settings-btn" onclick="document.getElementById('settings-modal').classList.add('show')">
+        <i class="fas fa-cog"></i> Settings
+    </button>
+</div>
+
+<!-- Settings Modal -->
+<div id="settings-modal" class="modal">
+    <div class="settings-card">
+        <div class="settings-header">
+            <h2><i class="fa-solid fa-server"></i> Proxy Settings</h2>
+            <button class="close-btn" onclick="document.getElementById('settings-modal').classList.remove('show')">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="settings-content">
+            <div class="section-title"><i class="fa-solid fa-cloud"></i> Select Prxy/Transport Type</div>
+            <div class="options-list">
+                <label><input type="radio" name="proxy-type" value="uv" checked> Ultraviolet</label>
+                <label><input type="radio" name="proxy-type" value="scramjet"> Scramjet</label>
+                <label><input type="radio" name="proxy-type" value="epoxy"> Epoxy</label>
+                <label><input type="radio" name="proxy-type" value="libcurl"> libcurl.js</label>
+            </div>
+            
+            <div class="section-title"><i class="fa-solid fa-plus-circle"></i> Custom Server</div>
+            <div class="custom-input-group">
+                <input type="text" id="custom-server-input" placeholder="Enter wss:// or server address">
+                <button onclick="saveCustomServer()"><i class="fa-solid fa-plus"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content / Frame -->
+<iframe id="browser-frame" src="about:blank"></iframe>
+<!-- JavaScript -->
+<script src="check.js" defer></script>
+<script defer src="scripts/lstimer.js"></script>
+<script type="text/javascript" src="https://fastly.jsdelivr.net/gh/vanjs-org/van/public/van-1.5.2.nomodule.min.js"></script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+<script src="active/uv/uv.bundle.js" defer></script>
+<script src="active/uv/uv.config.js" defer></script>
+<script src="active/scripts/tabs.mjs" type="module" defer></script>
+<script defer src="https://fastly.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.all.js"></script>
+
+<script type="module">
+    import * as BareMux from "https://fastly.jsdelivr.net/npm/@mercuryworkshop/bare-mux/dist/index.mjs";
+    window.BareMux = BareMux;
+</script>
+
+<script>
+    // Proxy configuration paths and placeholders
+    const proxyConfigs = {
+     {
+  bundle: 'uv/uv.bundle.js',
+  config: 'uv/uv.config.js',
+  sw: 'uv/uv.sw.js'
+
+        scramjet: {
+            path: "https://fastly.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.all.js"
+        },
+        epoxy: {
+            path: "/epoxy2.mjs"
+        },
+        libcurl: {
+            path1: "/libcurl_full.js",
+            path2: "/libcurl_full.js"
+        },
+        empty: {
+            path1: "PLACEHOLDER_EMPTY_1",
+            path2: "PLACEHOLDER_EMPTY_2"
+        }
+    };
+
+    // URL Bar functionality
+    const urlBar = document.getElementById('url-bar');
+    const browserFrame = document.getElementById('browser-frame');
+
+    urlBar.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            let query = urlBar.value.trim();
+            let url = query;
+
+            // Basic check if it is a URL or a search query
+            if (!query.includes('.') || query.includes(' ')) {
+                url = 'https://google.com' + encodeURIComponent(query);
+            } else if (!/^https?:\/\//i.test(query)) {
+                url = 'https://' + query;
+            }
+
+            // Note: Update this to direct through the selected proxy
+            browserFrame.src = url; 
+        }
+    });
+
+    // Custom Server Handler
+    function saveCustomServer() {
+        const customServer = document.getElementById('custom-server-input').value;
+        if(customServer) {
+            alert("Custom server saved: " + customServer);
+            // Logic to apply the custom server to the selected proxy
+        }
+    }
+</script>
+</body>
+</htmlg
