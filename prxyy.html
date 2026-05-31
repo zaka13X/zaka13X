@@ -8,11 +8,11 @@
 <!-- Scripts & Styles -->
 <link rel="stylesheet" href="style/global.css" />
 <link rel="stylesheet" href="style/browser.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cloudflare.com">
+<link href="https://googleapis.com" rel="stylesheet">
 
 <style>
-@import url("https://fonts.googleapis.com");
+@import url("https://googleapis.com");
 @font-face { font-family: "Good Timing Rg"; src: url("/_a/font/good-timing-bd.otf") format("opentype"); font-weight: normal; font-style: normal; }
 
 body, html { background-color: #121212; color: #eee; font-family: 'Inter', "DM Sans", sans-serif; margin: 0; padding: 0; width: 100vw; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
@@ -63,16 +63,16 @@ iframe { width: 100%; flex-grow: 1; border: none; background-color: #fff; }
 <!-- Browser Header -->
 <header id="browser-header">
     <div id="tab-list">
-        <!-- Tabs will be dynamically injected here -->
+        <!-- Tabs will be dynamically injected here via code -->
     </div>
     <div id="controls">
-        <button onclick="document.getElementById('browser-frame').contentWindow.history.back()">
+        <button id="back-btn">
             <i class="fas fa-arrow-left"></i> <span class="tooltip">Back</span>
         </button>
-        <button onclick="document.getElementById('browser-frame').contentWindow.history.forward()">
+        <button id="forward-btn">
             <i class="fas fa-arrow-right"></i> <span class="tooltip">Forward</span>
         </button>
-        <button onclick="location.reload()">
+        <button id="reload-btn">
             <i class="fas fa-sync-alt"></i> <span class="tooltip">Reload</span>
         </button>
     </div>
@@ -96,7 +96,7 @@ iframe { width: 100%; flex-grow: 1; border: none; background-color: #fff; }
             </button>
         </div>
         <div class="settings-content">
-            <div class="section-title"><i class="fa-solid fa-cloud"></i> Select Prxy/Transport Type</div>
+            <div class="section-title"><i class="fa-solid fa-cloud"></i> Select Proxy/Transport Type</div>
             <div class="options-list">
                 <label><input type="radio" name="proxy-type" value="uv" checked> Ultraviolet</label>
                 <label><input type="radio" name="proxy-type" value="scramjet"> Scramjet</label>
@@ -115,75 +115,151 @@ iframe { width: 100%; flex-grow: 1; border: none; background-color: #fff; }
 
 <!-- Main Content / Frame -->
 <iframe id="browser-frame" src="about:blank"></iframe>
-<!-- JavaScript -->
+<!-- JavaScript Dependencies -->
 <script src="check.js" defer></script>
 <script defer src="scripts/lstimer.js"></script>
-<script type="text/javascript" src="https://fastly.jsdelivr.net/gh/vanjs-org/van/public/van-1.5.2.nomodule.min.js"></script>
-<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+<script type="text/javascript" src="https://jsdelivr.net"></script>
+<script type="module" src="https://unpkg.com"></script>
+<script nomodule src="https://unpkg.com"></script>
 <script src="active/uv/uv.bundle.js" defer></script>
 <script src="active/uv/uv.config.js" defer></script>
 <script src="active/scripts/tabs.mjs" type="module" defer></script>
-<script defer src="https://fastly.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.all.js"></script>
+<script defer src="https://jsdelivr.net"></script>
 
 <script type="module">
-    import * as BareMux from "https://fastly.jsdelivr.net/npm/@mercuryworkshop/bare-mux/dist/index.mjs";
+    import * as BareMux from "https://jsdelivr.net";
     window.BareMux = BareMux;
 </script>
 
 <script>
-    // Proxy configuration paths and placeholders
+    // 1. Corrected Proxy Configuration structure with your requested Service Workers
     const proxyConfigs = {
-     {
-  bundle: 'uv/uv.bundle.js',
-  config: 'uv/uv.config.js',
-  sw: 'uv/uv.sw.js'
-
+        uv: {
+            bundle: 'active/uv/uv.bundle.js',
+            config: 'active/uv/uv.config.js',
+            sw: 'active/uv/uv.sw.js',
+            prefix: '/service/'
+        },
         scramjet: {
-            path: "https://fastly.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.all.js"
+            path: "https://jsdelivr.net",
+            sw: 'sj/sw.js',
+            prefix: '/scramjet/'
         },
         epoxy: {
-            path: "/epoxy2.mjs"
+            prefix: '/epoxy/'
         },
         libcurl: {
-            path1: "/libcurl_full.js",
-            path2: "/libcurl_full.js"
-        },
-        empty: {
-            path1: "PLACEHOLDER_EMPTY_1",
-            path2: "PLACEHOLDER_EMPTY_2"
+            prefix: '/libcurl/'
         }
     };
 
-    // URL Bar functionality
+    let selectedProxy = 'uv';
+    const iframe = document.getElementById('browser-frame');
     const urlBar = document.getElementById('url-bar');
-    const browserFrame = document.getElementById('browser-frame');
 
-    urlBar.addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            let query = urlBar.value.trim();
-            let url = query;
-
-            // Basic check if it is a URL or a search query
-            if (!query.includes('.') || query.includes(' ')) {
-                url = 'https://google.com' + encodeURIComponent(query);
-            } else if (!/^https?:\/\//i.test(query)) {
-                url = 'https://' + query;
+    // Function to register the corresponding Service Worker
+    async function registerServiceWorker(proxyType) {
+        if ('serviceWorker' in navigator) {
+            const config = proxyConfigs[proxyType];
+            if (config && config.sw) {
+                try {
+                    const registration = await navigator.serviceWorker.register(config.sw, {
+                        scope: config.prefix
+                    });
+                    console.log(`Service Worker registered successfully for ${proxyType}:`, registration.scope);
+                } catch (error) {
+                    console.error(`Service Worker registration failed for ${proxyType}:`, error);
+                }
             }
+        } else {
+            console.warn("Service Workers are not supported by this browser configuration.");
+        }
+    }
 
-            // Note: Update this to direct through the selected proxy
-            browserFrame.src = url; 
+    // Initialize default Ultraviolet service worker on load
+    window.addEventListener('load', () => {
+        registerServiceWorker('uv');
+    });
+
+    // 2. Fixed Iframe Navigation Controls safely
+    document.getElementById('back-btn').onclick = () => {
+        try { iframe.contentWindow.history.back(); } catch(e) { console.error("Cross-origin restriction blocked navigation history access."); }
+    };
+    document.getElementById('forward-btn').onclick = () => {
+        try { iframe.contentWindow.history.forward(); } catch(e) { console.error("Cross-origin restriction blocked navigation history access."); }
+    };
+    document.getElementById('reload-btn').onclick = () => {
+        iframe.src = iframe.src;
+    };
+
+    // 3. Simple Search and URL Processing Logic
+    function processUrl(input) {
+        input = input.trim();
+        if (/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/.test(input)) {
+            if (!/^https?:\/\//i.test(input)) {
+                input = 'https://' + input;
+            }
+            return input;
+        }
+        return 'https://google.com' + encodeURIComponent(input);
+    }
+
+    // 4. Handle URL Bar Submissions
+    urlBar.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            const targetUrl = processUrl(urlBar.value);
+            
+            // Rewrite logic based on active configuration selection
+            if (selectedProxy === 'uv' && window.__uv$config) {
+                iframe.src = window.location.origin + window.__uv$config.prefix + window.__uv$config.encodeUrl(targetUrl);
+            } else if (selectedProxy === 'scramjet' && window.__scramjet$config) {
+                iframe.src = window.location.origin + window.__scramjet$config.prefix + window.__scramjet$config.encodeUrl(targetUrl);
+            } else {
+                // Fallback direct load
+                iframe.src = targetUrl;
+            }
         }
     });
 
-    // Custom Server Handler
+    // 5. Track Proxy changes inside the settings card & switch service worker
+    document.querySelectorAll('input[name="proxy-type"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            selectedProxy = e.target.value;
+            console.log(`Proxy switched to: ${selectedProxy}`);
+            // Dynamically register the new service worker path
+            registerServiceWorker(selectedProxy);
+        });
+    });
+
+    // 6. Custom Server placeholder function to stop errors
     function saveCustomServer() {
-        const customServer = document.getElementById('custom-server-input').value;
-        if(customServer) {
-            alert("Custom server saved: " + customServer);
-            // Logic to apply the custom server to the selected proxy
+        const serverAddr = document.getElementById('custom-server-input').value;
+        if(serverAddr) {
+            alert(`Custom server applied: ${serverAddr}`);
+            document.getElementById('settings-modal').classList.remove('show');
         }
     }
+
+    // 7. Base Dynamic Tab creation placeholder
+    function createTab(name, url) {
+        const tabList = document.getElementById('tab-list');
+        const tab = document.createElement('div');
+        tab.className = 'tab-item selectedTab';
+        tab.innerHTML = `<span>${name}</span> <i class="fa-solid fa-xmark tab-close"></i>`;
+        
+        // Deselect other tabs
+        document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('selectedTab'));
+        
+        tab.querySelector('.tab-close').onclick = (e) => {
+            e.stopPropagation();
+            tab.remove();
+        };
+        
+        tabList.appendChild(tab);
+    }
+
+    // Instantiate an initial base tab on page load
+    createTab('Home', 'about:blank');
 </script>
 </body>
-</htmlg
+</html>
