@@ -73,13 +73,13 @@ self.basePath = self.basePath || basePath;
 
 self.$scramjet = {
     files: {
-        wasm: "https://cdn.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.wasm.wasm",
-        sync: "https://cdn.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.sync.js",
+        wasm: "/scramjet.wasm.wasm",
+        sync: "/scramjet.sync.js",
     }
 };
 
-importScripts("https://cdn.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.all.js");
-importScripts("https://cdn.jsdelivr.net/npm/@mercuryworkshop/bare-mux/dist/index.js");
+importScripts("/scramjet.all.js");
+importScripts("/bare-mux.js");
 
 const { ScramjetServiceWorker } = $scramjetLoadWorker();
 const scramjet = new ScramjetServiceWorker({
@@ -100,7 +100,7 @@ let wispConfig = {
 let serverHealth = new Map();
 let currentServerStartTime = null;
 const MAX_CONSECUTIVE_FAILURES = 2;
-const PING_TIMEOUT = 3000;
+const PING_TIMEOUT = 5000;
 
 let resolveConfigReady;
 const configReadyPromise = new Promise(resolve => resolveConfigReady = resolve);
@@ -264,7 +264,7 @@ scramjet.addEventListener("request", async (e) => {
 
         if (!scramjet.client) {
             const connection = new BareMux.BareMuxConnection(basePath + "bareworker.js");
-            await connection.setTransport("https://cdn.jsdelivr.net/npm/@mercuryworkshop/epoxy-transport@2.1.28/dist/index.mjs", [{ wisp: wispConfig.wispurl }]);
+            await connection.setTransport("/epoxy2.mjs", [{ wisp: wispConfig.wispurl }]);
             scramjet.client = connection;
         }
 
