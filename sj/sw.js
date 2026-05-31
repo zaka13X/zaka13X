@@ -263,7 +263,7 @@ scramjet.addEventListener("request", async (e) => {
         }
 
         if (!scramjet.client) {
-            const connection = new BareMux.BareMuxConnection(basePath + "bareworker.js");
+            const connection = new BareMux.BareMuxConnection(basePath + "/bareworker.js");
             await connection.setTransport("/epoxy2.mjs", [{ wisp: wispConfig.wispurl }]);
             scramjet.client = connection;
         }
