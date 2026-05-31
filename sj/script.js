@@ -191,7 +191,7 @@ async function getSharedConnection() {
     
     sharedConnection = new BareMux.BareMuxConnection(basePath + "bareworker.js");
     await sharedConnection.setTransport(
-        "https://cdn.jsdelivr.net/npm/@mercuryworkshop/epoxy-transport@2.1.28/dist/index.mjs",
+        "https://fastly.jsdelivr.net/npm/@mercuryworkshop/epoxy-transport@2.1.28/dist/index.mjs",
         [{ wisp: wispUrl }]
     );
     sharedConnectionReady = true;
@@ -359,7 +359,7 @@ function showIframeLoading(show, url = '') {
 
     if (show) {
         document.getElementById("loading-title").textContent = "Connecting";
-        document.getElementById("loading-url").textContent = url || "Loading content...";
+        document.getElementById("loading-url").textContent = url || "Loading...";
         document.getElementById("skip-btn").style.display = 'none';
     }
 }
@@ -652,7 +652,7 @@ function toggleDevTools() {
         return;
     }
     const script = win.document.createElement('script');
-    script.src = "https://cdn.jsdelivr.net/npm/eruda";
+    script.src = "https://fastly.jsdelivr.net/npm/eruda";
     script.onload = () => { win.eruda.init(); win.eruda.show(); };
     win.document.body.appendChild(script);
 }
