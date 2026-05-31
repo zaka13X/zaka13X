@@ -135,12 +135,13 @@ iframe { width: 100%; flex-grow: 1; border: none; background-color: #fff; }
 
 <script>
     // 1. Static Configuration mappings avoiding subdirectory routing bugs
+        // 1. Updated HTML mappings to perfectly align with your active/uv/ subfolder structure
     const proxyConfigs = {
         uv: {
-            bundle: 'uv/uv.bundle.js',
-            config: 'uv/uv.config.js',
-            sw: 'uv/uv.sw.js',         
-            prefix: '/service/'        
+            bundle: 'active/uv/uv.bundle.js',
+            config: 'active/uv/uv.config.js',
+            sw: 'active/uv/uv.sw.js',         
+            prefix: '/active/uv/service/' // MUST match the prefix inside your uv.config.js exactly!
         },
         scramjet: {
             path: "https://jsdelivr.net",
@@ -154,6 +155,7 @@ iframe { width: 100%; flex-grow: 1; border: none; background-color: #fff; }
             prefix: '/libcurl/'
         }
     };
+    
 
     let selectedProxy = 'uv';
     const iframe = document.getElementById('browser-frame');
