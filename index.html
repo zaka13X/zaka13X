@@ -86,6 +86,9 @@
         .card-small {
             min-height: 180px;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .card h2 {
@@ -96,6 +99,7 @@
 
         .card-small h2 {
             font-size: 1.2rem;
+            margin-bottom: 5px;
         }
 
         .card p {
@@ -104,14 +108,26 @@
             margin-bottom: 20px;
         }
 
-        .card a {
+        .card-small p {
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .card a, .cloak-btn {
             color: #64ffda;
             text-decoration: none;
             font-weight: 600;
             display: inline-block;
+            background: none;
+            border: none;
+            font-family: inherit;
+            font-size: 1rem;
+            cursor: pointer;
+            text-align: left;
+            padding: 0;
         }
 
-        .card a:hover {
+        .card a:hover, .cloak-btn:hover {
             text-decoration: underline;
         }
     </style>
@@ -145,23 +161,63 @@
                 </section>
             </div>
 
-            <!-- 2 Smaller Sections Under -->
+            <!-- 2 Smaller Sections (Updated with working Cloak Launchers) -->
             <div class="grid-small">
                 <section class="card card-small">
-                    <h2></h2>
-                    <p></p>
-                    <a href="/404.html"></a>
+                    <h2>Cloak 1</h2>
+                    <p>Launch application environment via isolated framework stream.</p>
+                    <button class="cloak-btn" onclick="openBlobPortal()">Launch Portal</button>
                 </section>
                 <section class="card card-small">
-                    <h2></h2>
-                    <p></p>
-                    <a href="/404.html"></a>
+                    <h2>Cloak 2</h2>
+                    <p>Alternative framework initialization using local asset caching.</p>
+                    <button class="cloak-btn" onclick="openBlobPortal()">Launch Portal</button>
                 </section>
             </div>
         </main>
     </div>
 
     <script>
+        // Formulated Blob Launch Strategy
+        function openBlobPortal() {
+            const targetUrl = '/proxys.html';
+
+            // Complete iframe shell definition
+            // NOTICE: "allow-top-navigation" is excluded to keep page changes trapped inside the frame container
+            const templateMarkup = `
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Application View</title>
+                    <style>
+                        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background-color: #000; }
+                        iframe { border: none; width: 100%; height: 100%; }
+                    </style>
+                </head>
+                <body>
+                    <iframe 
+                        src="${targetUrl}" 
+                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-popups-to-escape-sandbox"
+                        allow="geolocation; microphone; camera; clipboard-write;">
+                    </iframe>
+                </body>
+                </html>
+            `;
+
+            // Pack the markup content safely into a local memory reference
+            const markupBlob = new Blob([templateMarkup], { type: 'text/html' });
+            const directUrl = URL.createObjectURL(markupBlob);
+
+            // Trigger window environment generation natively
+            const portalTab = window.open(directUrl, '_blank');
+
+            if (!portalTab) {
+                alert('Pop-up blocked! Please allow pop-ups for this site to deploy the container.');
+            }
+        }
+
+        // Background Particle Logic Engine
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
 
