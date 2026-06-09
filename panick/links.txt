@@ -3,3 +3,6 @@ https://zaka13.localplayer.dev/
 https://zaka.dpdns.org/
 https://zaka.qzz.io
 https://zaka13x.zakariyaliban328.workers.dev/
+https://cdn.statically.io/gh/zaka13X/zaka13X@main/67.svg
+https://cdn.jsdelivr.net/gh/zaka13X/zaka13X@main/67.svg
+https://fastly.jsdelivr.net/gh/zaka13X/zaka13X@main/67.svg
