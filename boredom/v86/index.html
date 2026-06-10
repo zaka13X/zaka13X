@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>v86 Emulator</title>
+    <title>v86 Emulator Frame</title>
     <style>
         body {
             margin: 0;
@@ -24,7 +24,6 @@
             justify-content: center;
         }
 
-        /* Dedicated container for the loading text, placed safely away from the canvas */
         #loading_status {
             height: 20px;
             margin-bottom: 10px;
@@ -57,29 +56,39 @@
         .btn-active:hover {
             background-color: #27ae60 !important;
         }
+        
+        .btn-lock-active {
+            background-color: #f1c40f !important;
+            color: #222 !important;
+        }
 
         #iso_file {
             display: none;
         }
 
+        /* FIXED: Removed rigid dimensions so the container sizes perfectly with the content */
         #screen_container {
             background-color: #000;
             border: 2px solid #555;
-            width: 720px;
-            height: 400px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
+            display: inline-block; /* Wraps tightly around the internal canvas */
+            max-width: 100vw;
+            max-height: 80vh;
+            overflow: visible; /* Prevents text clipping */
             box-sizing: border-box;
         }
 
+        /* Fullscreen handling */
         #screen_container:fullscreen {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
             width: 100vw !important;
             height: 100vh !important;
             border: none !important;
+            background-color: #000;
         }
 
+        /* Dynamically format any text blocks v86 injects for SeaBIOS */
         #screen_container div {
             white-space: pre !important;
             font-family: monospace !important;
@@ -87,16 +96,17 @@
             line-height: 14px !important;
             color: #ffffff !important;
             background-color: #000000 !important;
-            width: 100%;
-            height: 100%;
             padding: 10px;
             box-sizing: border-box;
         }
 
+        /* FIXED: Controls canvas dimensions automatically */
         #screen_container canvas {
             display: block !important;
             max-width: 100%;
             max-height: 100%;
+            width: auto !important;
+            height: auto !important;
         }
     </style>
 </head>
@@ -106,16 +116,15 @@
     
     <div class="controls">
         <button id="fullscreen_btn">🖥️ Enter Fullscreen</button>
-        <label for="iso_file">💿 Upload ISO</label>
+        <label for="iso_file">💿 Upload Tiny Core ISO</label>
         <input type="file" id="iso_file" accept=".iso">
         <button id="acpi_btn">🔌 ACPI: OFF</button>
+        <button id="mouse_lock_btn">🖱️ Lock Mouse</button>
+        <button id="kb_lock_btn">⌨️ Lock Keyboard</button>
         <button id="reset_btn" style="background-color: #e74c3c;">🔄 Reset CPU</button>
     </div>
 
-    <!-- The loading messages will live here now, keeping the emulator screen perfectly clear -->
     <div id="loading_status"></div>
-    
-    <!-- This container now stays completely clean for SeaBIOS and the OS canvas -->
     <div id="screen_container"></div>
 
     <script src="libv86.js"></script>
@@ -128,6 +137,8 @@
             const fileInput = document.getElementById("iso_file");
             const resetButton = document.getElementById("reset_btn");
             const acpiButton = document.getElementById("acpi_btn");
+            const mouseLockBtn = document.getElementById("mouse_lock_btn");
+            const kbLockBtn = document.getElementById("kb_lock_btn");
 
             let currentIsoBuffer = null;
             let acpiEnabled = false; 
@@ -137,7 +148,6 @@
                     try { window.emulator.destroy(); } catch(e) {}
                 }
 
-                // Empty out the container so the canvas layers bind flawlessly 
                 container.innerHTML = "";
                 statusBox.innerHTML = "⏳ Initializing hardware layers...";
 
@@ -162,25 +172,22 @@
 
                 window.emulator = new EmulatorConstructor(config);
 
-                // Update the dedicated text status element outside the screen layout
                 window.emulator.add_listener("download-progress", function(e) {
                     let fileName = e.url ? e.url.split('/').pop() : "ISO Data Stream";
                     statusBox.innerHTML = `⏳ Streaming ${fileName}... (${Math.round(e.loaded / 1024)} KB loaded)`;
                 });
 
-                // Clear the loading status element once the CPU turns on
                 window.emulator.add_listener("emulator-ready", function() {
                     statusBox.innerHTML = "✅ Ready";
                 });
             }
 
-            // Start up in standard default initialization state
             startEmulator(null);
 
             fileInput.addEventListener("change", function(e) {
                 const file = e.target.files;
-                if (file && file[0]) {
-                    currentIsoBuffer = file[0];
+                if (file && file) {
+                    currentIsoBuffer = file;
                     startEmulator(currentIsoBuffer);
                 }
             });
@@ -203,6 +210,41 @@
                 }
             });
 
+            mouseLockBtn.addEventListener("click", function() {
+                if (document.pointerLockElement !== container) {
+                    container.requestPointerLock();
+                } else {
+                    document.exitPointerLock();
+                }
+            });
+
+            document.addEventListener("pointerlockchange", function() {
+                if (document.pointerLockElement === container) {
+                    mouseLockBtn.innerText = "🔒 Mouse Locked";
+                    mouseLockBtn.classList.add("btn-lock-active");
+                } else {
+                    mouseLockBtn.innerText = "🖱️ Lock Mouse";
+                    mouseLockBtn.classList.remove("btn-lock-active");
+                }
+            });
+
+            kbLockBtn.addEventListener("click", function() {
+                if (!navigator.keyboard || !navigator.keyboard.lock) {
+                    alert("Your browser does not support the Keyboard Lock API. Try Chrome or Edge.");
+                    return;
+                }
+                if (!document.fullscreenElement) {
+                    alert("Keyboard Lock can only be enabled while in Fullscreen mode! Click 'Enter Fullscreen' first.");
+                    return;
+                }
+                navigator.keyboard.lock(["Escape", "Tab", "AltGraph", "MetaLeft", "MetaRight"]).then(() => {
+                    kbLockBtn.innerText = "🔒 Keyboard Locked";
+                    kbLockBtn.classList.add("btn-lock-active");
+                }).catch((err) => {
+                    console.error("Keyboard lock failed:", err);
+                });
+            });
+
             fsButton.addEventListener("click", function() {
                 if (!document.fullscreenElement) {
                     container.requestFullscreen().catch(err => console.error(err.message));
@@ -210,8 +252,18 @@
                     document.exitFullscreen();
                 }
             });
+
             document.addEventListener("fullscreenchange", function() {
-                fsButton.innerHTML = document.fullscreenElement ? "❌ Exit Fullscreen" : "🖥️ Enter Fullscreen";
+                if (document.fullscreenElement) {
+                    fsButton.innerHTML = "❌ Exit Fullscreen";
+                } else {
+                    fsButton.innerHTML = "🖥️ Enter Fullscreen";
+                    if (navigator.keyboard && navigator.keyboard.unlock) {
+                        navigator.keyboard.unlock();
+                        kbLockBtn.innerText = "⌨️ Lock Keyboard";
+                        kbLockBtn.classList.remove("btn-lock-active");
+                    }
+                }
             });
         };
     </script>
