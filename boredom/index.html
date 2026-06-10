@@ -95,7 +95,7 @@
     async function loadGames() {
       const grid = document.getElementById('games-grid');
       try {
-        const response = await fetch('/idk.json');
+        const response = await fetch('/boredom/idk.json');
         const games = await response.json();
 
         if (games.length === 0) {
