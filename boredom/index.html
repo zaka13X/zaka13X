@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boredom killer</title>
+  <style>
+    :root {
+      --bg-color: #0b0c10;
+      --card-bg: #1f2833;
+      --text-main: #c5c6c7;
+      --accent-blue: #45f3ff;
+      --accent-hover: #00d2ff;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      color: var(--accent-blue);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 30px;
+      text-shadow: 0 0 10px rgba(69, 243, 255, 0.5);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 20px;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 2px solid #2f3b4c;
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 15px rgba(69, 243, 255, 0.3);
+    }
+
+    .card img {
+      width: 64px;
+      height: 64px;
+      border-radius: 8px;
+      object-fit: cover;
+      margin-bottom: 12px;
+      background-color: #000;
+    }
+
+    .card span {
+      color: #fff;
+      font-weight: 600;
+      font-size: 1.1em;
+    }
+
+    .empty {
+      color: #555;
+      grid-column: 1 / -1;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Bored?</h1>
+
+  <div class="grid" id="games-grid">
+    <!-- Games get loaded here automatically -->
+  </div>
+
+  <script>
+    async function loadGames() {
+      const grid = document.getElementById('games-grid');
+      try {
+        const response = await fetch('/index.json');
+        const games = await response.json();
+
+        if (games.length === 0) {
+          grid.innerHTML = '<p class="empty">Nothing Found (404)</p>';
+          return;
+        }
+
+        grid.innerHTML = games.map(game => `
+          <a href="/games/${game.fileName}" class="card">
+            <img src="${game.icon}" onerror="this.src='https://flaticon.com'" alt="icon">
+            <span>${game.title}</span>
+          </a>
+        `).join('');
+
+      } catch (err) {
+        grid.innerHTML = '<p class="empty">Error loading.</p>';
+      }
+    }
+
+    window.onload = loadGames;
+  </script>
+</body>
+</html>
