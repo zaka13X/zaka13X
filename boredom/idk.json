@@ -1,0 +1,62 @@
+[
+  {
+    "title": "CREDITS",
+    "fileName": "CREDITS.html",
+    "icon": "/default-iconnnn.png"
+  },
+  {
+    "title": "v86 emulator",
+    "fileName": "/v86/load.html",
+    "icon": "/default-icon.png"
+  },
+  {
+    "title": "contact me",
+    "fileName": "contact-me.html",
+    "icon": "/games/contact-me.png"
+  },
+  {
+    "title": "idk",
+    "fileName": "eaglercraft-1.21.11.html",
+    "icon": "/default-icon.png"
+  },
+  {
+    "title": "PLACEHOLDER",
+    "fileName": "minecraft-1.12.html",
+    "icon": "/games/minecraft-1.12.png"
+  },
+  {
+    "title": "PLACEHOLDER",
+    "fileName": "minecraft-1.8.html",
+    "icon": "/games/minecraft-1.8.png"
+  },
+  {
+    "title": "PLACEHOLDER",
+    "fileName": "resent-client(Eaglercraft).html",
+    "icon": "/games/resent-client(Eaglercraft).png"
+  },
+  {
+    "title": "PLACEHOLDER",
+    "fileName": "slope.html",
+    "icon": "/games/slope.png"
+  },
+  {
+    "title": "PLACEHOLDER",
+    "fileName": "snake.html",
+    "icon": "/default-icon.png"
+  },
+  {
+    "title": "PLACEHOLDER",
+    "fileName": "tetris.html",
+    "icon": "/default-icon.png"
+  },
+  {
+    "title": "PLACEHOLDER",
+    "fileName": "tuff-client.html",
+    "icon": "/games/tuff-client.png"
+  },
+  {
+    "title": "webprxy",
+    "fileName": "webprxy.html",
+    "icon": "/games/webprxy.png"
+  }
+]
