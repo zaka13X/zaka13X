@@ -16,8 +16,13 @@
             align-items: center;
         }
 
-        /* Fullscreen control button styling placed directly over the monitor */
-        #fullscreen_btn {
+        .controls {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button, label {
             background-color: #3498db;
             color: white;
             border: none;
@@ -26,14 +31,17 @@
             font-weight: bold;
             border-radius: 4px;
             cursor: pointer;
-            margin-bottom: 15px;
             transition: background-color 0.2s;
         }
-        #fullscreen_btn:hover {
+        button:hover, label:hover {
             background-color: #2980b9;
         }
 
-        /* Main bounding framework layout container for the emulator */
+        /* Input is hidden because the <label> acts as the button */
+        #iso_file {
+            display: none;
+        }
+
         #screen_container {
             background-color: #000;
             border: 2px solid #555;
@@ -46,14 +54,12 @@
             box-sizing: border-box;
         }
 
-        /* Automated styling cascade triggered when entering fullscreen mode */
         #screen_container:fullscreen {
             width: 100vw !important;
             height: 100vh !important;
             border: none !important;
         }
 
-        /* Global structural styling forcing raw text lines to scale and contrast sharply */
         #screen_container div {
             white-space: pre !important;
             font-family: monospace !important;
@@ -67,7 +73,6 @@
             box-sizing: border-box;
         }
 
-        /* Forces the dynamic inner canvas component to resize nicely */
         #screen_container canvas {
             display: block !important;
             max-width: 100%;
@@ -79,79 +84,83 @@
 
     <h1>v86</h1>
     
-    <!-- Controls Layout Layer -->
-    <button id="fullscreen_btn">Enter Fullscreen</button>
+    <div class="controls">
+        <button id="fullscreen_btn">Enter Fullscreen</button>
+        <!-- This label acts as a stylized upload button -->
+        <label for="iso_file">Upload & Boot ISO</label>
+        <input type="file" id="iso_file" accept=".iso">
+    </div>
     
-    <!-- Leave this tag empty. v86 manages its internal nodes during asset download execution. -->
     <div id="screen_container"></div>
 
-    <!-- Script loading points mapped locally relative to boredom/v86/index.html -->
     <script src="libv86.js"></script>
     <script>
         window.onload = function() {
-            // Adaptive backup mapping supporting multiple compilation build targets
             const EmulatorConstructor = window.V86Starter || window.V86;
             const container = document.getElementById("screen_container");
             const fsButton = document.getElementById("fullscreen_btn");
+            const fileInput = document.getElementById("iso_file");
 
-            // Direct visual layout injector ensuring feedback during raw data transmission
-            container.innerHTML = "<div id='loading_msg' style='color: #2ecc71;'>⏳ Initializing runtime packages...</div>";
+            function startEmulator(cdromOptions) {
+                // Clear out previous instances or loading messages
+                container.innerHTML = "<div id='loading_msg' style='color: #2ecc71;'>⏳ Initializing runtime packages...</div>";
 
-            // Booting Virtual Component Hardware Parameters
-            window.emulator = new EmulatorConstructor({
-                wasm_path: "v86.wasm",
-                screen_container: container,
-                
-                bios: { url: "seabios.bin" },
-                vga_bios: { url: "vgabios.bin" },
-                
-                /* 
-                 * ISO FILE PATH TUNER: 
-                 * If your index.iso is saved right alongside this file in boredom/v86/, change the line below to:
-                 * cdrom: { url: "index.iso" },
-                 */
-                cdrom: { url: "../../index.iso" }, 
-                
-                memory_size: 256 * 1024 * 1024, 
-                vga_memory_size: 8 * 1024 * 1024, 
-                autostart: true,
-                disable_keyboard: false,
-                disable_mouse: false,
-                network_relay_url: "wss://relay.widgetry.org/"
-            });
+                const config = {
+                    wasm_path: "v86.wasm",
+                    screen_container: container,
+                    bios: { url: "seabios.bin" },
+                    vga_bios: { url: "vgabios.bin" },
+                    memory_size: 256 * 1024 * 1024, 
+                    vga_memory_size: 8 * 1024 * 1024, 
+                    autostart: true,
+                    disable_keyboard: false,
+                    disable_mouse: false,
+                    network_relay_url: "wss://relay.widgetry.org/"
+                };
 
-            // Dynamic Asset Download Tracker Hook 
-            window.emulator.add_listener("download-progress", function(e) {
-                const loadBox = document.getElementById("loading_msg");
-                if (loadBox) {
-                    let fileName = e.url ? e.url.split('/').pop() : "System Volume";
-                    loadBox.innerHTML = `⏳ Loading ${fileName}... (${Math.round(e.loaded / 1024)} KB stored)`;
+                // Append CDROM configuration dynamically if available
+                if (cdromOptions) {
+                    config.cdrom = cdromOptions;
+                }
+
+                window.emulator = new EmulatorConstructor(config);
+
+                // Re-attach progress listeners
+                window.emulator.add_listener("download-progress", function(e) {
+                    const loadBox = document.getElementById("loading_msg");
+                    if (loadBox) {
+                        let fileName = e.url ? e.url.split('/').pop() : "System Volume";
+                        loadBox.innerHTML = `⏳ Loading ${fileName}... (${Math.round(e.loaded / 1024)} KB stored)`;
+                    }
+                });
+
+                window.emulator.add_listener("download-error", function(e) {
+                    alert("FETCH ERROR:\nFailed to load: " + e.url);
+                });
+            }
+
+            // 1. Initial boot: Start up in No-ISO fallback mode so you can see SeaBIOS instantly
+            startEmulator(null);
+
+            // 2. File Upload Handler: Boots the file instantly when selected
+            fileInput.addEventListener("change", function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // Pass the raw HTML5 File Object straight into v86
+                    startEmulator({ buffer: file });
                 }
             });
 
-            // Absolute File Error Catchment Layer
-            window.emulator.add_listener("download-error", function(e) {
-                alert("EMULATOR LINK FAILURE:\nThe system failed to download the following file: \n" + e.url + "\n\nPlease double check its exact file location!");
-            });
-
-            // HTML5 Fullscreen Trigger Pipeline Mapping
+            // Fullscreen Mapping
             fsButton.addEventListener("click", function() {
                 if (!document.fullscreenElement) {
-                    container.requestFullscreen().catch(err => {
-                        console.error(`Fullscreen request rejected: ${err.message}`);
-                    });
+                    container.requestFullscreen().catch(err => console.error(err.message));
                 } else {
                     document.exitFullscreen();
                 }
             });
-
-            // Monitors and transforms text buttons asynchronously when exiting fullscreen
             document.addEventListener("fullscreenchange", function() {
-                if (document.fullscreenElement) {
-                    fsButton.innerHTML = "Exit Fullscreen";
-                } else {
-                    fsButton.innerHTML = "Enter Fullscreen";
-                }
+                fsButton.innerHTML = document.fullscreenElement ? "❌ Exit Fullscreen" : "🖥️ Enter Fullscreen";
             });
         };
     </script>
