@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>v86</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #222;
+            color: #fff;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #screen_container {
+            position: relative;
+            background-color: #000;
+            border: 2px solid #555;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>v86</h1>
+    <div id="screen_container">
+        <div style="white-space: pre; font: 14px monospace; line-height: 14px"></div>
+    </div>
+
+    <!-- Load v86 engine -->
+    <script src="/boredom/v86/libv86.js"></script>
+
+    <script>
+        window.onload = function() {
+            window.emulator = new V86({
+                wasm_path: "/boredom/v86/v86.wasm",
+                screen_container: document.querySelector("#screen_container > div"),
+                bios: {
+                    url: "/boredom/v86/seabios.bin"
+                },
+                vga_bios: {
+                    url: "/boredom/v86/vgabios.bin"
+                },
+                cdrom: {
+                    url: "/index.iso"
+                },
+                memory_size: 400 * 1024 * 1024, // 400 MB
+                vga_memory_size: 10 * 1024 * 1024, // 10 MB
+                autostart: true,
+                disable_keyboard: false,
+                disable_mouse: false,
+
+                // --- NETWORK CONFIGURATION ---
+                // Emulates a reliable Intel e1000 network card
+                network_relay_url: "wss://relay.widgetry.org/", // Public test relay. Replace with your own server relay if needed.
+            });
+        };
+    </script>
+</body>
+</html>
