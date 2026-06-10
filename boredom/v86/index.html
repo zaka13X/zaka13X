@@ -15,57 +15,42 @@
             flex-direction: column;
             align-items: center;
         }
-
-        /* The container must have explicitly assigned layout space */
         #screen_container {
             background-color: #000;
             border: 2px solid #555;
-            width: 720px;
-            min-height: 400px;
-            display: block;
-        }
-
-        /* Force terminal layout formatting rules onto v86 injected nodes */
-        #screen_container div {
-            white-space: pre !important;
-            font-family: monospace !important;
-            font-size: 14px !important;
-            line-height: 14px !important;
-            color: #ffffff !important;
-            display: block !important;
-        }
-        
-        #screen_container canvas {
-            display: block;
+            padding: 5px;
         }
     </style>
 </head>
 <body>
 
-    <h1>v86 Emulator Box</h1>
+    <h1>v86</h1>
     
-    <!-- Leave completely clean for dynamic runtime layout attachment -->
-    <div id="screen_container"></div>
+    <!-- CRITICAL FIX: The inner structure must exist for SeaBIOS text elements -->
+    <div id="screen_container">
+        <div style="white-space: pre; font: 14px monospace; line-height: 14px; color: #fff;"></div>
+        <canvas style="display: none"></canvas>
+    </div>
 
-    <!-- 1. Try a fallback direct relative link path context -->
-    <script src="boredom/v86/libv86.js"></script>
+    <!-- FIXED PATH: Directly references the file since it is in the same directory -->
+    <script src="libv86.js"></script>
     <script>
         window.onload = function() {
             window.emulator = new V86({
-                // 2. ABSOLUTE PATH FIX: Removed leading slashes so assets are checked relative to index.html
-                wasm_path: "boredom/v86/v86.wasm",
+                // FIXED PATHS: No directory prefixes since files match index.html location
+                wasm_path: "v86.wasm",
                 screen_container: document.getElementById("screen_container"),
                 
-                bios: { url: "boredom/v86/seabios.bin" },
-                vga_bios: { url: "boredom/v86/vgabios.bin" },
-                cdrom: { url: "index.iso" },
+                bios: { url: "seabios.bin" },
+                vga_bios: { url: "vgabios.bin" },
+                cdrom: { url: "../../index.iso" }, // Adjusted assuming index.iso is at your root directory
                 
-                // Stable low-overhead configurations
                 memory_size: 256 * 1024 * 1024, 
                 vga_memory_size: 8 * 1024 * 1024, 
                 autostart: true,
                 disable_keyboard: false,
-                disable_mouse: false
+                disable_mouse: false,
+                network_relay_url: "wss://relay.widgetry.org/"
             });
         };
     </script>
