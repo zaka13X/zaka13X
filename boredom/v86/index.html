@@ -16,7 +16,7 @@
             align-items: center;
         }
 
-        /* Styling for the Fullscreen Control Button */
+        /* Fullscreen control button styling placed directly over the monitor */
         #fullscreen_btn {
             background-color: #3498db;
             color: white;
@@ -33,7 +33,7 @@
             background-color: #2980b9;
         }
 
-        /* Set fixed bounding dimensions for the x86 Monitor screen */
+        /* Main bounding framework layout container for the emulator */
         #screen_container {
             background-color: #000;
             border: 2px solid #555;
@@ -43,16 +43,17 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            box-sizing: border-box;
         }
 
-        /* CSS rules applied automatically when the container goes fullscreen */
+        /* Automated styling cascade triggered when entering fullscreen mode */
         #screen_container:fullscreen {
             width: 100vw !important;
             height: 100vh !important;
             border: none !important;
         }
 
-        /* Dynamically format any text blocks v86 injects for SeaBIOS */
+        /* Global structural styling forcing raw text lines to scale and contrast sharply */
         #screen_container div {
             white-space: pre !important;
             font-family: monospace !important;
@@ -62,9 +63,11 @@
             background-color: #000000 !important;
             width: 100%;
             height: 100%;
+            padding: 10px;
+            box-sizing: border-box;
         }
 
-        /* Format the actual single canvas element v86 spawns */
+        /* Forces the dynamic inner canvas component to resize nicely */
         #screen_container canvas {
             display: block !important;
             max-width: 100%;
@@ -74,29 +77,39 @@
 </head>
 <body>
 
-    <h1>v86 Emulator Screen</h1>
+    <h1>v86</h1>
     
-    <!-- Fullscreen control placed right on top of the emulator layout -->
-    <button id="fullscreen_btn">🖥️ Enter Fullscreen</button>
+    <!-- Controls Layout Layer -->
+    <button id="fullscreen_btn">Enter Fullscreen</button>
     
-    <!-- Empty element for dynamic runtime layout attachment -->
+    <!-- Leave this tag empty. v86 manages its internal nodes during asset download execution. -->
     <div id="screen_container"></div>
 
+    <!-- Script loading points mapped locally relative to boredom/v86/index.html -->
     <script src="libv86.js"></script>
     <script>
         window.onload = function() {
-            // Adaptive constructor mapping
+            // Adaptive backup mapping supporting multiple compilation build targets
             const EmulatorConstructor = window.V86Starter || window.V86;
             const container = document.getElementById("screen_container");
             const fsButton = document.getElementById("fullscreen_btn");
 
-            // 1. Initialize Emulator Core Instance
+            // Direct visual layout injector ensuring feedback during raw data transmission
+            container.innerHTML = "<div id='loading_msg' style='color: #2ecc71;'>⏳ Initializing runtime packages...</div>";
+
+            // Booting Virtual Component Hardware Parameters
             window.emulator = new EmulatorConstructor({
                 wasm_path: "v86.wasm",
                 screen_container: container,
                 
                 bios: { url: "seabios.bin" },
                 vga_bios: { url: "vgabios.bin" },
+                
+                /* 
+                 * ISO FILE PATH TUNER: 
+                 * If your index.iso is saved right alongside this file in boredom/v86/, change the line below to:
+                 * cdrom: { url: "index.iso" },
+                 */
                 cdrom: { url: "../../index.iso" }, 
                 
                 memory_size: 256 * 1024 * 1024, 
@@ -107,24 +120,37 @@
                 network_relay_url: "wss://relay.widgetry.org/"
             });
 
-            // 2. Fullscreen API Implementation Logic
+            // Dynamic Asset Download Tracker Hook 
+            window.emulator.add_listener("download-progress", function(e) {
+                const loadBox = document.getElementById("loading_msg");
+                if (loadBox) {
+                    let fileName = e.url ? e.url.split('/').pop() : "System Volume";
+                    loadBox.innerHTML = `⏳ Loading ${fileName}... (${Math.round(e.loaded / 1024)} KB stored)`;
+                }
+            });
+
+            // Absolute File Error Catchment Layer
+            window.emulator.add_listener("download-error", function(e) {
+                alert("EMULATOR LINK FAILURE:\nThe system failed to download the following file: \n" + e.url + "\n\nPlease double check its exact file location!");
+            });
+
+            // HTML5 Fullscreen Trigger Pipeline Mapping
             fsButton.addEventListener("click", function() {
                 if (!document.fullscreenElement) {
-                    // Request full screen view on the wrapper container element
                     container.requestFullscreen().catch(err => {
-                        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+                        console.error(`Fullscreen request rejected: ${err.message}`);
                     });
                 } else {
                     document.exitFullscreen();
                 }
             });
 
-            // Optional: Dynamically update button text based on screen state
+            // Monitors and transforms text buttons asynchronously when exiting fullscreen
             document.addEventListener("fullscreenchange", function() {
                 if (document.fullscreenElement) {
                     fsButton.innerHTML = "Exit Fullscreen";
                 } else {
-                    fsButton.innerHTML = " Enter Fullscreen";
+                    fsButton.innerHTML = "Enter Fullscreen";
                 }
             });
         };
