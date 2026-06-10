@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>v86 Debugger</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #222;
+            color: #fff;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #screen_container {
+            background-color: #000;
+            border: 2px solid #555;
+            width: 640px;
+            height: 400px;
+        }
+        /* Custom screen log since you can't access F12 DevTools right now */
+        #custom_console {
+            width: 640px;
+            height: 180px;
+            background-color: #111;
+            border: 1px dashed #f1c40f;
+            margin-top: 20px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #2ecc71;
+            overflow-y: scroll;
+            box-sizing: border-box;
+        }
+        .err { color: #e74c3c; font-weight: bold; }
+        .warn { color: #f39c12; }
+    </style>
+</head>
+<body>
+
+    <h1>v86 Emulator Box</h1>
+    <div id="screen_container"></div>
+    
+    <!-- On-screen logs will print exactly what's failing inside this box -->
+    <div id="custom_console">-- INTERNAL LOG INITIALIZED --<br></div>
+
+    <script src="/boredom/v86/libv86.js"></script>
+    <script>
+        const logBox = document.getElementById("custom_console");
+        function printLog(msg, type = "info") {
+            logBox.innerHTML += `<span class="${type}">[${new Date().toLocaleTimeString()}] ${msg}</span><br>`;
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+        // Catch general loading script crashes
+        window.onerror = function(message, source, lineno) {
+            printLog(`FATAL BROWSER CRASH: ${message} (Line ${lineno})`, "err");
+            return false;
+        };
+
+        window.onload = function() {
+            printLog("Checking security sandbox capabilities...");
+
+            // 1. TEST FOR SECURITY BLOCKS (The absolute most common cause of black screen hang)
+            if (typeof window.SharedArrayBuffer === "undefined") {
+                printLog("CRITICAL ERROR: 'SharedArrayBuffer' is BLOCKED by your web server or browser!", "err");
+                printLog("FIX: You must serve this HTML through a web server that passes COOP and COEP cross-origin headers, or turn off multithreading in your v86 build.", "warn");
+                return;
+            } else {
+                printLog("Security sandbox check passed. SharedArrayBuffer is available.");
+            }
+
+            printLog("Loading emulator packages...");
+            try {
+                window.emulator = new V86({
+                    wasm_path: "/boredom/v86/v86.wasm",
+                    screen_container: document.getElementById("screen_container"),
+                    bios: { url: "/boredom/v86/seabios.bin" },
+                    vga_bios: { url: "/boredom/v86/vgabios.bin" },
+                    cdrom: { url: "/index.iso" },
+                    memory_size: 128 * 1024 * 1024, // Kept small (128MB) for rapid testing
+                    vga_memory_size: 4 * 1024 * 1024, 
+                    autostart: true
+                });
+
+                printLog("V86 Engine initialized. Attaching hooks...");
+
+                // Monitor internal engine events
+                window.emulator.add_listener("emulator-ready", function() {
+                    printLog("SUCCESS: Emulator CPU core successfully initialized and execution started!", "info");
+                });
+
+                window.emulator.add_listener("download-error", function(e) {
+                    printLog(`FILE FETCH FAILED: Failed to grab file asset from server -> ${e.url}`, "err");
+                    printLog("FIX: Verify your folder naming. Is your folder named '/boredom/v86/' exactly?", "warn");
+                });
+
+                window.emulator.add_listener("download-progress", function(e) {
+                    printLog(`Downloading system assets: ${e.url} (${Math.round(e.loaded / 1024)} KB loaded)`);
+                });
+
+            } catch (err) {
+                printLog(`INITIALIZATION CRASHED: ${err.message}`, "err");
+            }
+        };
+    </script>
+</body>
+</html>
