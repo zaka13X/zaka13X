@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>v86 Emulator Frame</title>
+    <title>v86 Emulator</title>
     <style>
         body {
             margin: 0;
@@ -17,11 +17,20 @@
         }
 
         .controls {
-            margin-bottom: 15px;
+            margin-bottom: 5px;
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
             justify-content: center;
+        }
+
+        /* Dedicated container for the loading text, placed safely away from the canvas */
+        #loading_status {
+            height: 20px;
+            margin-bottom: 10px;
+            font-family: monospace;
+            font-size: 13px;
+            color: #2ecc71;
         }
 
         button, label {
@@ -42,7 +51,6 @@
             transform: scale(0.98);
         }
 
-        /* Styling state for when ACPI mode is turned ON */
         .btn-active {
             background-color: #2ecc71 !important;
         }
@@ -97,16 +105,17 @@
     <h1>v86 Emulator Matrix</h1>
     
     <div class="controls">
-        <button id="fullscreen_btn">Enter Fullscreen</button>
+        <button id="fullscreen_btn">🖥️ Enter Fullscreen</button>
         <label for="iso_file">💿 Upload ISO</label>
         <input type="file" id="iso_file" accept=".iso">
-        
-        <!-- NEW: Dynamic ACPI Toggle Control Switch -->
-        <button id="acpi_btn">ACPI: OFF</button>
-        
+        <button id="acpi_btn">🔌 ACPI: OFF</button>
         <button id="reset_btn" style="background-color: #e74c3c;">🔄 Reset CPU</button>
     </div>
+
+    <!-- The loading messages will live here now, keeping the emulator screen perfectly clear -->
+    <div id="loading_status"></div>
     
+    <!-- This container now stays completely clean for SeaBIOS and the OS canvas -->
     <div id="screen_container"></div>
 
     <script src="libv86.js"></script>
@@ -114,22 +123,23 @@
         window.onload = function() {
             const EmulatorConstructor = window.V86Starter || window.V86;
             const container = document.getElementById("screen_container");
+            const statusBox = document.getElementById("loading_status");
             const fsButton = document.getElementById("fullscreen_btn");
             const fileInput = document.getElementById("iso_file");
             const resetButton = document.getElementById("reset_btn");
             const acpiButton = document.getElementById("acpi_btn");
 
-            // Global runtime state cache variables
             let currentIsoBuffer = null;
             let acpiEnabled = false; 
 
             function startEmulator(cdromBuffer) {
-                // Destroy old internal listeners safely before wiping the container element
                 if (window.emulator) {
                     try { window.emulator.destroy(); } catch(e) {}
                 }
 
-                container.innerHTML = "<div id='loading_msg' style='color: #2ecc71;'>⏳ Initializing hardware layers...</div>";
+                // Empty out the container so the canvas layers bind flawlessly 
+                container.innerHTML = "";
+                statusBox.innerHTML = "⏳ Initializing hardware layers...";
 
                 const config = {
                     wasm_path: "v86.wasm",
@@ -139,8 +149,6 @@
                     
                     memory_size: 256 * 1024 * 1024,      
                     vga_memory_size: 16 * 1024 * 1024,   
-                    
-                    // Assigning the dynamic state of our variable flag toggle
                     acpi: acpiEnabled,                  
                     
                     autostart: true,
@@ -154,52 +162,47 @@
 
                 window.emulator = new EmulatorConstructor(config);
 
-                // Re-bind storage stream reporting trackers
+                // Update the dedicated text status element outside the screen layout
                 window.emulator.add_listener("download-progress", function(e) {
-                    const loadBox = document.getElementById("loading_msg");
-                    if (loadBox) {
-                        let fileName = e.url ? e.url.split('/').pop() : "System Volume";
-                        loadBox.innerHTML = ` Loading ${fileName}... (${Math.round(e.loaded / 1024)} KB stored)`;
-                    }
+                    let fileName = e.url ? e.url.split('/').pop() : "ISO Data Stream";
+                    statusBox.innerHTML = `⏳ Streaming ${fileName}... (${Math.round(e.loaded / 1024)} KB loaded)`;
+                });
+
+                // Clear the loading status element once the CPU turns on
+                window.emulator.add_listener("emulator-ready", function() {
+                    statusBox.innerHTML = "✅ Ready";
                 });
             }
 
-            // Start up completely blank at first launch
+            // Start up in standard default initialization state
             startEmulator(null);
 
-            // Handle file storage target buffer caching
             fileInput.addEventListener("change", function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    currentIsoBuffer = file;
+                const file = e.target.files;
+                if (file && file[0]) {
+                    currentIsoBuffer = file[0];
                     startEmulator(currentIsoBuffer);
                 }
             });
 
-            // NEW: ACPI Click Handler Logic Pipeline
             acpiButton.addEventListener("click", function() {
-                acpiEnabled = !acpiEnabled; // Reverse state flag toggle
-                
+                acpiEnabled = !acpiEnabled;
                 if (acpiEnabled) {
-                    acpiButton.innerText = "ACPI: ON";
+                    acpiButton.innerText = "🔌 ACPI: ON";
                     acpiButton.classList.add("btn-active");
                 } else {
-                    acpiButton.innerText = "ACPI: OFF";
+                    acpiButton.innerText = "🔌 ACPI: OFF";
                     acpiButton.classList.remove("btn-active");
                 }
-
-                // Hot re-initialize the emulator using the newly chosen power state
                 startEmulator(currentIsoBuffer);
             });
 
-            // Hard reset listener pipeline
             resetButton.addEventListener("click", function() {
                 if (window.emulator) {
                     window.emulator.restart();
                 }
             });
 
-            // HTML5 Fullscreen Canvas Handler mapping
             fsButton.addEventListener("click", function() {
                 if (!document.fullscreenElement) {
                     container.requestFullscreen().catch(err => console.error(err.message));
