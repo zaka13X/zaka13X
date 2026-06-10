@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>v86</title>
+    <title>v86 Emulator Box</title>
     <style>
         body {
             margin: 0;
@@ -18,32 +18,55 @@
         #screen_container {
             background-color: #000;
             border: 2px solid #555;
-            padding: 5px;
+            padding: 10px;
+            width: 720px;
+            min-height: 400px;
+            display: block !important;
+        }
+        /* Force the text lines that SeaBIOS outputs to show up clearly */
+        #screen_container div {
+            white-space: pre !important;
+            font-family: monospace !important;
+            font-size: 16px !important;
+            line-height: 18px !important;
+            color: #ffffff !important;
+            background-color: #000000 !important;
+            display: block !important;
+        }
+        #screen_container canvas {
+            display: none;
         }
     </style>
 </head>
 <body>
 
-    <h1>v86</h1>
+    <h1>v86 Emulator</h1>
     
-    <!-- CRITICAL FIX: The inner structure must exist for SeaBIOS text elements -->
+    <!-- This structure matches the official v86 screen adapter layout requirements -->
     <div id="screen_container">
-        <div style="white-space: pre; font: 14px monospace; line-height: 14px; color: #fff;"></div>
+        <div style="white-space: pre; font: 14px monospace; line-height: 14px;"></div>
         <canvas style="display: none"></canvas>
     </div>
 
-    <!-- FIXED PATH: Directly references the file since it is in the same directory -->
+    <!-- Loading from the current local folder -->
     <script src="libv86.js"></script>
     <script>
         window.onload = function() {
-            window.emulator = new V86({
-                // FIXED PATHS: No directory prefixes since files match index.html location
+            // FIX: Fallback logic that automatically handles whichever class your v86 file uses
+            const EmulatorConstructor = window.V86Starter || window.V86;
+            
+            if (!EmulatorConstructor) {
+                alert("Error: libv86.js did not load any global emulator object classes into the browser window.");
+                return;
+            }
+
+            window.emulator = new EmulatorConstructor({
                 wasm_path: "v86.wasm",
                 screen_container: document.getElementById("screen_container"),
                 
                 bios: { url: "seabios.bin" },
                 vga_bios: { url: "vgabios.bin" },
-                cdrom: { url: "../../index.iso" }, // Adjusted assuming index.iso is at your root directory
+                cdrom: { url: "../../index.iso" }, // Assumes index.iso is at your main root directory level
                 
                 memory_size: 256 * 1024 * 1024, 
                 vga_memory_size: 8 * 1024 * 1024, 
