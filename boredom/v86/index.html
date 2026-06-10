@@ -15,49 +15,56 @@
             flex-direction: column;
             align-items: center;
         }
+        /* Style the container to frame the emulator screen */
         #screen_container {
-            position: relative;
             background-color: #000;
             border: 2px solid #555;
         }
-        canvas {
+        /* Ensure v86 graphical canvas or text layout wraps nicely */
+        #screen_container canvas {
             display: block;
+        }
+        #screen_container div {
+            white-space: pre;
+            font: 14px monospace;
+            line-height: 14px;
         }
     </style>
 </head>
 <body>
 
     <h1>v86</h1>
-    <div id="screen_container">
-        <div style="white-space: pre; font: 14px monospace; line-height: 14px"></div>
-    </div>
+    
+    <!-- This container is where v86 will automatically inject the emulator screen -->
+    <div id="screen_container"></div>
 
     <!-- Load v86 engine -->
     <script src="/boredom/v86/libv86.js"></script>
-
     <script>
         window.onload = function() {
             window.emulator = new V86({
+                // Required path to your WebAssembly binary
                 wasm_path: "/boredom/v86/v86.wasm",
-                screen_container: document.querySelector("#screen_container > div"),
-                bios: {
-                    url: "/boredom/v86/seabios.bin"
-                },
-                vga_bios: {
-                    url: "/boredom/v86/vgabios.bin"
-                },
-                cdrom: {
-                    url: "/index.iso"
-                },
-                memory_size: 400 * 1024 * 1024, // 400 MB
-                vga_memory_size: 10 * 1024 * 1024, // 10 MB
+                
+                // Point directly to the parent container element
+                screen_container: document.getElementById("screen_container"),
+                
+                // BIOS and OS image assets
+                bios: { url: "/boredom/v86/seabios.bin" },
+                vga_bios: { url: "/boredom/v86/vgabios.bin" },
+                cdrom: { url: "/index.iso" },
+                
+                // Resources allocations
+                memory_size: 256 * 1024 * 1024, // Reduced to 256MB for better browser compatibility
+                vga_memory_size: 8 * 1024 * 1024, // Standard 8MB VGA allocation
+                
+                // Interaction settings
                 autostart: true,
                 disable_keyboard: false,
                 disable_mouse: false,
-
-                // --- NETWORK CONFIGURATION ---
-                // Emulates a reliable Intel e1000 network card
-                network_relay_url: "wss://relay.widgetry.org/", // Public test relay. Replace with your own server relay if needed.
+                
+                // Network Configuration via WebSocket relay
+                network_relay_url: "wss://relay.widgetry.org/"
             });
         };
     </script>
