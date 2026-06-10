@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>v86 Emulator Frame</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #222;
+            color: #fff;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .controls {
+            margin-bottom: 5px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        #loading_status {
+            height: 20px;
+            margin-bottom: 10px;
+            font-family: monospace;
+            font-size: 13px;
+            color: #f1c40f;
+        }
+
+        button, label {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        button:hover, label:hover {
+            background-color: #2980b9;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .btn-active {
+            background-color: #2ecc71 !important;
+        }
+        .btn-active:hover {
+            background-color: #27ae60 !important;
+        }
+        
+        .btn-lock-active {
+            background-color: #f1c40f !important;
+            color: #222 !important;
+        }
+
+        #iso_file {
+            display: none;
+        }
+
+        #screen_container {
+            background-color: #000;
+            border: 2px solid #555;
+            display: inline-block;
+            max-width: 100vw;
+            max-height: 80vh;
+            overflow: visible;
+            box-sizing: border-box;
+        }
+
+        #screen_container:fullscreen {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            width: 100vw !important;
+            height: 100vh !important;
+            border: none !important;
+            background-color: #000;
+        }
+
+        #screen_container div {
+            white-space: pre !important;
+            font-family: monospace !important;
+            font-size: 14px !important;
+            line-height: 14px !important;
+            color: #ffffff !important;
+            background-color: #000000 !important;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        #screen_container canvas {
+            display: block !important;
+            max-width: 100%;
+            max-height: 100%;
+            width: auto !important;
+            height: auto !important;
+        }
+        
+        .placeholder-view {
+            width: 720px;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: monospace;
+            color: #888;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>v86 Emulator Matrix</h1>
+    
+    <div class="controls">
+        <label for="iso_file" style="background-color: #2ecc71;">💿 Upload ISO to Start</label>
+        <input type="file" id="iso_file" accept=".iso">
+
+        <button id="fullscreen_btn">🖥️ Enter Fullscreen</button>
+        <button id="acpi_btn">🔌 ACPI: OFF</button>
+        <button id="mouse_lock_btn">🖱️ Lock Mouse</button>
+        <button id="kb_lock_btn">⌨️ Lock Keyboard</button>
+        <button id="reset_btn" style="background-color: #e74c3c;">🔄 Reset CPU</button>
+    </div>
+
+    <div id="loading_status">💿 Waiting for an operating system image...</div>
+    
+    <div id="screen_container">
+        <div class="placeholder-view">System offline. Please select an ISO file above to boot.</div>
+    </div>
+
+    <!-- Load local dependencies -->
+    <script src="libv86.js"></script>
+        <script>
+        window.onload = function() {
+            const EmulatorConstructor = window.V86Starter || window.V86;
+            const container = document.getElementById("screen_container");
+            const statusBox = document.getElementById("loading_status");
+            const fsButton = document.getElementById("fullscreen_btn");
+            const fileInput = document.getElementById("iso_file");
+            const resetButton = document.getElementById("reset_btn");
+            const acpiButton = document.getElementById("acpi_btn");
+            const mouseLockBtn = document.getElementById("mouse_lock_btn");
+            const kbLockBtn = document.getElementById("kb_lock_btn");
+
+            let currentIsoBuffer = null;
+            let acpiEnabled = false; 
+
+            function startEmulator(cdromBuffer) {
+                if (!cdromBuffer) return;
+
+                if (window.emulator) {
+                    try { window.emulator.destroy(); } catch(e) {}
+                }
+
+                container.innerHTML = "";
+                statusBox.style.color = "#2ecc71";
+                statusBox.innerHTML = "⏳ Initializing hardware layers...";
+
+                const config = {
+                    wasm_path: "v86.wasm",
+                    screen_container: container,
+                    bios: { url: "seabios.bin" },
+                    vga_bios: { url: "vgabios.bin" },
+                    
+                    memory_size: 256 * 1024 * 1024,      
+                    vga_memory_size: 16 * 1024 * 1024,   
+                    acpi: acpiEnabled,                  
+                    
+                    autostart: true,
+                    disable_keyboard: false,
+                    disable_mouse: false
+                };
+
+                config.cdrom = { buffer: cdromBuffer };
+
+                window.emulator = new EmulatorConstructor(config);
+
+                window.emulator.add_listener("download-progress", function(e) {
+                    let fileName = e.url ? e.url.split('/').pop() : "ISO Data Stream";
+                    statusBox.innerHTML = `⏳ Streaming ${fileName}... (${Math.round(e.loaded / 1024)} KB loaded)`;
+                });
+
+                window.emulator.add_listener("emulator-ready", function() {
+                    statusBox.innerHTML = "✅ Running";
+                });
+            }
+
+            fileInput.addEventListener("change", function(e) {
+                const file = e.target.files;
+                if (file && file[0]) {
+                    currentIsoBuffer = file;
+                    startEmulator(currentIsoBuffer);
+                }
+            });
+
+            acpiButton.addEventListener("click", function() {
+                acpiEnabled = !acpiEnabled;
+                if (acpiEnabled) {
+                    acpiButton.innerText = "🔌 ACPI: ON";
+                    acpiButton.classList.add("btn-active");
+                } else {
+                    acpiButton.innerText = "🔌 ACPI: OFF";
+                    acpiButton.classList.remove("btn-active");
+                }
+                
+                if (currentIsoBuffer) {
+                    startEmulator(currentIsoBuffer);
+                }
+            });
+
+            resetButton.addEventListener("click", function() {
+                if (window.emulator) {
+                    window.emulator.restart();
+                }
+            });
+
+            mouseLockBtn.addEventListener("click", function() {
+                if (window.emulator && document.pointerLockElement !== container) {
+                    container.requestPointerLock();
+                } else {
+                    document.exitPointerLock();
+                }
+            });
+
+            document.addEventListener("pointerlockchange", function() {
+                if (document.pointerLockElement === container) {
+                    mouseLockBtn.innerText = "🔒 Mouse Locked";
+                    mouseLockBtn.classList.add("btn-lock-active");
+                } else {
+                    mouseLockBtn.innerText = "🖱️ Lock Mouse";
+                    mouseLockBtn.classList.remove("btn-lock-active");
+                }
+            });
+
+            kbLockBtn.addEventListener("click", function() {
+                if (!navigator.keyboard || !navigator.keyboard.lock) {
+                    alert("Your browser does not support the Keyboard Lock API. Try Chrome or Edge.");
+                    return;
+                }
+                if (!document.fullscreenElement) {
+                    alert("Keyboard Lock can only be enabled while in Fullscreen mode! Click 'Enter Fullscreen' first.");
+                    return;
+                }
+                navigator.keyboard.lock(["Escape", "Tab", "AltGraph", "MetaLeft", "MetaRight"]).then(() => {
+                    kbLockBtn.innerText = "🔒 Keyboard Locked";
+                    kbLockBtn.classList.add("btn-lock-active");
+                }).catch((err) => {
+                    console.error("Keyboard lock failed:", err);
+                });
+            });
+
+            fsButton.addEventListener("click", function() {
+                if (!document.fullscreenElement) {
+                    container.requestFullscreen().catch(err => console.error(err.message));
+                } else {
+                    document.exitFullscreen();
+                }
+            });
+
+            document.addEventListener("fullscreenchange", function() {
+                if (document.fullscreenElement) {
+                    fsButton.innerHTML = "❌ Exit Fullscreen";
+                } else {
+                    fsButton.innerHTML = "🖥️ Enter Fullscreen";
+                    if (navigator.keyboard && navigator.keyboard.unlock) {
+                        navigator.keyboard.unlock();
+                        kbLockBtn.innerText = "⌨️ Lock Keyboard";
+                        kbLockBtn.classList.remove("btn-lock-active");
+                    }
+                }
+            });
+        };
+    </script>
+</body>
+</html>
