@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>v86 Emulator Frame</title>
+    <title>v86</title>
     <style>
         body {
             margin: 0;
@@ -16,99 +16,57 @@
             align-items: center;
         }
 
-        /* Essential Container Stack for v86 rendering */
+        /* The container must have explicitly assigned layout space */
         #screen_container {
             background-color: #000;
             border: 2px solid #555;
             width: 720px;
             min-height: 400px;
-            box-sizing: border-box;
-            padding: 5px;
+            display: block;
         }
 
-        /* 1. GRAPHICAL CANVAS LAYER: Used for OS Graphics */
+        /* Force terminal layout formatting rules onto v86 injected nodes */
+        #screen_container div {
+            white-space: pre !important;
+            font-family: monospace !important;
+            font-size: 14px !important;
+            line-height: 14px !important;
+            color: #ffffff !important;
+            display: block !important;
+        }
+        
         #screen_container canvas {
             display: block;
-            margin: 0 auto;
-        }
-
-        /* 2. TEXT TERMINAL LAYER: Explicitly styled for SeaBIOS boot sequence text */
-        #screen_container div {
-            white-space: pre;
-            font-family: "Courier New", monospace !important;
-            font-size: 14px !important;
-            line-height: 16px !important;
-            color: #ffffff !important;
-            background-color: #000000 !important;
-            display: block !important;
-            visibility: visible !important;
-        }
-
-        #custom_console {
-            width: 720px;
-            height: 150px;
-            background-color: #111;
-            border: 1px dashed #f1c40f;
-            margin-top: 20px;
-            padding: 10px;
-            font-family: monospace;
-            font-size: 12px;
-            color: #2ecc71;
-            overflow-y: auto;
-            box-sizing: border-box;
         }
     </style>
 </head>
 <body>
 
-    <h1>v86 Emulator Frame</h1>
+    <h1>v86 Emulator Box</h1>
     
-    <!-- This root node must remain empty for v86 to mount text/graphics components cleanly -->
+    <!-- Leave completely clean for dynamic runtime layout attachment -->
     <div id="screen_container"></div>
-    
-    <div id="custom_console">-- COMPATIBILITY LOGGER INITIALIZED --<br></div>
 
-    <script src="/boredom/v86/libv86.js"></script>
+    <!-- 1. Try a fallback direct relative link path context -->
+    <script src="boredom/v86/libv86.js"></script>
     <script>
-        const logBox = document.getElementById("custom_console");
-        function printLog(msg) {
-            logBox.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}<br>`;
-            logBox.scrollTop = logBox.scrollHeight;
-        }
-
         window.onload = function() {
-            printLog("Launching Virtual Core Engine...");
-            
-            try {
-                window.emulator = new V86({
-                    wasm_path: "/boredom/v86/v86.wasm",
-                    // Pass the parent container node cleanly
-                    screen_container: document.getElementById("screen_container"),
-                    
-                    bios: { url: "/boredom/v86/seabios.bin" },
-                    vga_bios: { url: "/boredom/v86/vgabios.bin" },
-                    cdrom: { url: "/index.iso" },
-                    
-                    memory_size: 512 * 1024 * 1024, 
-                    vga_memory_size: 8 * 1024 * 1024, 
-                    autostart: true,
-                    disable_keyboard: false,
-                    disable_mouse: false
-                });
-
-                window.emulator.add_listener("emulator-ready", function() {
-                    printLog("<b style='color:white;'> The CPU core execution cycle is running!</b>");
-                });
-
-                // Capture fallback textual data directly from the serial port interface
-                window.emulator.add_listener("serial0-output", function(char) {
-                    // If the visual element is rendering blank, check if output flows to serial
-                    console.log("Serial Core out: " + char);
-                });
-
-            } catch (err) {
-                printLog("<span style='color:red;'>CRASH: " + err.message + "</span>");
-            }
+            window.emulator = new V86({
+                // 2. ABSOLUTE PATH FIX: Removed leading slashes so assets are checked relative to index.html
+                wasm_path: "boredom/v86/v86.wasm",
+                screen_container: document.getElementById("screen_container"),
+                
+                bios: { url: "boredom/v86/seabios.bin" },
+                vga_bios: { url: "boredom/v86/vgabios.bin" },
+                cdrom: { url: "index.iso" },
+                
+                // Stable low-overhead configurations
+                memory_size: 256 * 1024 * 1024, 
+                vga_memory_size: 8 * 1024 * 1024, 
+                autostart: true,
+                disable_keyboard: false,
+                disable_mouse: false
+            });
         };
     </script>
 </body>
