@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>v86 Emulator Box</title>
+    <title>v86 Emulator Frame</title>
     <style>
         body {
             margin: 0;
@@ -15,58 +15,89 @@
             flex-direction: column;
             align-items: center;
         }
+
+        /* Styling for the Fullscreen Control Button */
+        #fullscreen_btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            transition: background-color 0.2s;
+        }
+        #fullscreen_btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* Set fixed bounding dimensions for the x86 Monitor screen */
         #screen_container {
             background-color: #000;
             border: 2px solid #555;
-            padding: 10px;
             width: 720px;
-            min-height: 400px;
-            display: block !important;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
-        /* Force the text lines that SeaBIOS outputs to show up clearly */
+
+        /* CSS rules applied automatically when the container goes fullscreen */
+        #screen_container:fullscreen {
+            width: 100vw !important;
+            height: 100vh !important;
+            border: none !important;
+        }
+
+        /* Dynamically format any text blocks v86 injects for SeaBIOS */
         #screen_container div {
             white-space: pre !important;
             font-family: monospace !important;
-            font-size: 16px !important;
-            line-height: 18px !important;
+            font-size: 14px !important;
+            line-height: 14px !important;
             color: #ffffff !important;
             background-color: #000000 !important;
-            display: block !important;
+            width: 100%;
+            height: 100%;
         }
+
+        /* Format the actual single canvas element v86 spawns */
         #screen_container canvas {
-            display: none;
+            display: block !important;
+            max-width: 100%;
+            max-height: 100%;
         }
     </style>
 </head>
 <body>
 
-    <h1>v86 Emulator</h1>
+    <h1>v86 Emulator Screen</h1>
     
-    <!-- This structure matches the official v86 screen adapter layout requirements -->
-    <div id="screen_container">
-        <div style="white-space: pre; font: 14px monospace; line-height: 14px;"></div>
-        <canvas style="display: none"></canvas>
-    </div>
+    <!-- Fullscreen control placed right on top of the emulator layout -->
+    <button id="fullscreen_btn">🖥️ Enter Fullscreen</button>
+    
+    <!-- Empty element for dynamic runtime layout attachment -->
+    <div id="screen_container"></div>
 
-    <!-- Loading from the current local folder -->
     <script src="libv86.js"></script>
     <script>
         window.onload = function() {
-            // FIX: Fallback logic that automatically handles whichever class your v86 file uses
+            // Adaptive constructor mapping
             const EmulatorConstructor = window.V86Starter || window.V86;
-            
-            if (!EmulatorConstructor) {
-                alert("Error: libv86.js did not load any global emulator object classes into the browser window.");
-                return;
-            }
+            const container = document.getElementById("screen_container");
+            const fsButton = document.getElementById("fullscreen_btn");
 
+            // 1. Initialize Emulator Core Instance
             window.emulator = new EmulatorConstructor({
                 wasm_path: "v86.wasm",
-                screen_container: document.getElementById("screen_container"),
+                screen_container: container,
                 
                 bios: { url: "seabios.bin" },
                 vga_bios: { url: "vgabios.bin" },
-                cdrom: { url: "../../index.iso" }, // Assumes index.iso is at your main root directory level
+                cdrom: { url: "../../index.iso" }, 
                 
                 memory_size: 256 * 1024 * 1024, 
                 vga_memory_size: 8 * 1024 * 1024, 
@@ -74,6 +105,27 @@
                 disable_keyboard: false,
                 disable_mouse: false,
                 network_relay_url: "wss://relay.widgetry.org/"
+            });
+
+            // 2. Fullscreen API Implementation Logic
+            fsButton.addEventListener("click", function() {
+                if (!document.fullscreenElement) {
+                    // Request full screen view on the wrapper container element
+                    container.requestFullscreen().catch(err => {
+                        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+                    });
+                } else {
+                    document.exitFullscreen();
+                }
+            });
+
+            // Optional: Dynamically update button text based on screen state
+            document.addEventListener("fullscreenchange", function() {
+                if (document.fullscreenElement) {
+                    fsButton.innerHTML = "Exit Fullscreen";
+                } else {
+                    fsButton.innerHTML = " Enter Fullscreen";
+                }
             });
         };
     </script>
