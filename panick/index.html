@@ -201,7 +201,7 @@
 
             try {
                 // Fetch the raw text contents of your local target application
-                const sourceResponse = await fetch('/active/index.html');
+                const sourceResponse = await fetch('/index.html');
                 
                 if (!sourceResponse.ok) {
                     throw new Error("Target file path execution dropped (404/403).");
