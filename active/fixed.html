@@ -1,0 +1,330 @@
+ <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UV Static (modified by zaka13)</title>
+    <script src="check.js" defer></script>
+    <script defer src="scripts/lstimer.js"></script>
+
+    <link rel="stylesheet" href="style/global.css" />
+    <link rel="stylesheet" href="style/browser.css" />
+    
+
+    <script
+      type="text/javascript"
+      src="https://fastly.jsdelivr.net/gh/vanjs-org/van/public/van-1.5.2.nomodule.min.js"
+    ></script>
+
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+    ></script>
+
+    <script src="uv/uv.bundle.js" defer></script>
+    <script src="uv/uv.config.js" defer></script>
+    <script src="scripts/tabs.mjs" type="module" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script defer src="https://fastly.jsdelivr.net/gh/tf7software/Font-Awesome-pro-cdn@main/js/all.js"></script>
+    <style>
+      @import "https://googleapis.com";
+      @font-face {
+        font-family: "Good Timing Rg";
+        src: url("/_a/font/good-timing-bd.otf") format("opentype");
+        font-weight: normal;
+        font-style: normal;
+      }
+      
+      /* Global base styles */
+      body {
+        background-color: #121212;
+        color: #eee;
+        font-family: "DM Sans", sans-serif;
+        text-align: center;
+        padding: 0;
+        margin: 0;
+      }
+
+      /* Non-inlinable interactive pseudo-selectors */
+      .hover-focus1:hover:not(.selectedTab) {
+        background-color: rgba(26, 26, 26, 0.15) !important;
+      }
+      .hover-focus2:hover:not(.selectedTab) {
+        background-color: rgba(40, 40, 40, 0.25) !important;
+      }
+      .sidebar-container header .page-data #controls button:hover .tooltip {
+        visibility: visible;
+        opacity: 1;
+        top: 28px;
+      }
+      .option:hover {
+        background: rgba(226, 226, 226, 0.17);
+      }
+      button:hover {
+        color: #ffffff;
+        background-color: #b80c00;
+        border-color: #b80c00;
+        transform: translateY(-3px);
+      }
+
+      /* Engine layout specs for script elements */
+      header #tab-list .tab-item {
+        position: relative;
+        display: flex;
+        gap: 0.5rem;
+        width: 95%;
+        border-radius: 6px;
+        background: rgba(226, 226, 226, 0);
+        justify-content: flex-start;
+        align-items: center;
+        cursor: pointer;
+        border: none;
+        outline: none;
+        padding: 0.5rem;
+        font: inherit;
+        color: inherit;
+        font-weight: 500;
+        animation: slide-in-from-top 0.15s ease;
+      }
+      header #tab-list .tab-item img {
+        height: 1.25em;
+      }
+      header #tab-list .tab-item span {
+        font: inherit;
+        color: inherit;
+        font-weight: 400;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 80%;
+        text-align: left;
+      }
+      header #tab-list .tab-item .close {
+        position: absolute;
+        right: 0.5rem;
+        background-color: transparent;
+        border: none;
+        outline: none;
+        border-radius: 2rem;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        aspect-ratio: 1/1;
+        transition: 0.15s ease;
+      }
+      header #tab-list .tab-item .close:hover {
+        background-color: rgba(226, 226, 226, 0.17);
+      }
+      header #tab-list .tab-item .close .close-icon {
+        font-size: 1.2rem;
+        color: transparent;
+        height: 1.2rem;
+        width: 1.2rem;
+      }
+      header #tab-list .tab-item.selectedTab {
+        background: rgba(226, 226, 226, 0.25);
+      }
+      header #tab-list .tab-item:hover .close-icon {
+        color: rgb(220, 220, 220);
+      }
+      #tab-view .tab-frame {
+        height: 97%;
+        width: 98%;
+        background-color: white;
+        border-radius: 8px;
+        border: none;
+        outline: none;
+      }
+      .r-alert {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: auto;
+        padding: 8px;
+        background-color: #1b1b1b;
+        border: 1px solid #2c2c2c;
+        border-radius: 6px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.15s ease;
+        z-index: 1000;
+        color: rgba(255, 255, 255, 0.9);
+      }
+      .r-alert p {
+        margin: 0;
+        font-size: 14.5px;
+      }
+      #particles-js {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+      }
+      .gridContainer .item {
+        padding: 10px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.01);
+        backdrop-filter: blur(10px);
+      }
+
+      /* Webkit layout scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 10px;
+        height: 0;
+      }
+      ::-webkit-scrollbar-track {
+        background: #870014;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #ff4763;
+        border-radius: 10px 0 0 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #eee;
+      }
+
+      /* Animations and Responsive layout breakpoints */
+      @keyframes slide-in-from-top {
+        0% { transform: translateY(-25%); opacity: 0; }
+        100% { transform: translateY(0); opacity: 1; }
+      }
+      @keyframes slide-out-from-bottom {
+        0% { transform: translateY(0); opacity: 1; }
+        100% { transform: translateY(-25%); opacity: 0; }
+      }
+      @media (max-width: 600px) {
+        #small-screen-overlay {
+          display: flex !important;
+        }
+      }
+    </style>
+    <script>
+      window.onload = function () {
+        if (!localStorage.getItem("discordAlertShown")) {
+          alert("Join our discord.gg/XygZfmMM86 for bonuses, updates, links, and more!");
+          localStorage.setItem("discordAlertShown", "true");
+        }
+      };
+    </script>
+  </head>
+    <body style="background-color: #121212; color: #eee; font-family: 'DM Sans', sans-serif; text-align: center; padding: 0; margin: 0;">
+    <div id="small-screen-overlay" style="display: none; position: fixed; justify-content: center; align-items: center; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.9); color: white; text-align: center; padding: none; z-index: 2000;">
+      UV Static 2.0 doesn't support smaller screens. Please use UV Static 2.0 on a larger screen.
+    </div>
+
+    <div id="nav" style="background: #1e1e1e; border-radius: 8px; padding: 20px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);"></div>
+    <div id="main-content"></div>
+
+    <div id="tab-view" class="" style="width: 80vw; height: 100vh; display: flex; justify-content: center; align-items: center; position: absolute; right: 0; padding: 0; margin: 0;"></div>
+    
+    <div class="sidebar-container" style="display: flex; justify-content: center; align-items: center; width: 20vw; height: 100vh; overflow-y: scroll; overflow-x: hidden;">
+      <header style="display: flex; width: 20vw; height: 99vh; margin: 0; flex-direction: column; justify-content: flex-start; align-items: center; flex-shrink: 0; border-radius: 0.4rem; position: absolute; left: 0.5rem; transition: 0.2s ease-in-out;">
+        <div class="page-data" style="width: 95%; padding: 0.3rem 0;">
+          <span id="controls" style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
+            <button onclick="window.location.href='/'" style="display: inline-block; text-decoration: none; color: rgba(255, 255, 255, 0.8); font-size: 1.2em; padding: 12px 22px; border: 2px solid #3a3a3a; border-radius: 5px; transition: 0.25s; background: rgba(35, 35, 35); cursor: pointer; font: inherit; font-weight: 500; position: relative;">
+              <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+              <svg
+   width="38.454208mm"
+   height="24.726074mm"
+   viewBox="0 0 38.454208 24.726074"
+   version="1.1"
+   id="svg1"
+   xmlns="http://w3.org"
+   xmlns:svg="http://w3.org"
+   style="width: 36px; height: 36px; padding: 0; border-radius: 0.5rem; margin: 0;">
+  <defs
+     id="defs1" />
+  <g
+     id="layer1"
+     transform="translate(-145.0951,-136.5279)">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32.9681px;font-family:'Dallas Print Shop';-inkscape-font-specification:'Dallas Print Shop';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#5a32e3;fill-opacity:1;stroke-width:2.74734"
+       x="142.33917"
+       y="161.25397"
+       id="text2"><tspan
+         id="tspan1"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Krungthep;-inkscape-font-specification:Krungthep;fill:#5a32e3;fill-opacity:1;stroke-width:2.74734"
+         x="142.33917"
+         y="161.25397">v2</tspan></text>
+  </g>
+</svg>
+
+              <p class="tooltip" style="padding: 6.5px 8px; position: absolute; top: 24px; left: 50%; transform: translateX(-50%); text-align: center; background: #464141; color: rgba(255, 255, 255, 0.834); visibility: hidden; opacity: 0; transition: 0.15s ease; border-radius: 5px; font-size: 14.5px;">Home</p>
+            </button>
+            <span>
+              <button id="page-back" style="display: inline-block; text-decoration: none; color: rgba(255, 255, 255, 0.8); font-size: 1.2em; padding: 12px 22px; border: 2px solid #3a3a3a; border-radius: 5px; transition: 0.25s; background: rgba(35, 35, 35); cursor: pointer; font: inherit; font-weight: 500; position: relative;">
+                <ion-icon
+                  name="arrow-back-outline"
+                  class="icon hover-focus1"
+                  style="font-size: 1.2rem; padding: 0.4rem; border-radius: 6px; transition: 0.15s ease-in-out;"
+                ></ion-icon>
+                <p class="tooltip" style="padding: 6.5px 8px; position: absolute; top: 24px; left: 50%; transform: translateX(-50%); text-align: center; background: #464141; color: rgba(255, 255, 255, 0.834); visibility: hidden; opacity: 0; transition: 0.15s ease; border-radius: 5px; font-size: 14.5px;">Back</p>
+              </button>
+              <button id="page-forward" style="display: inline-block; text-decoration: none; color: rgba(255, 255, 255, 0.8); font-size: 1.2em; padding: 12px 22px; border: 2px solid #3a3a3a; border-radius: 5px; transition: 0.25s; background: rgba(35, 35, 35); cursor: pointer; font: inherit; font-weight: 500; position: relative;">
+                <ion-icon
+                  name="arrow-forward-outline"
+                  class="icon hover-focus1"
+                  style="font-size: 1.2rem; padding: 0.4rem; border-radius: 6px; transition: 0.15s ease-in-out;"
+                ></ion-icon>
+                <p class="tooltip" style="padding: 6.5px 8px; position: absolute; top: 24px; left: 50%; transform: translateX(-50%); text-align: center; background: #464141; color: rgba(255, 255, 255, 0.834); visibility: hidden; opacity: 0; transition: 0.15s ease; border-radius: 5px; font-size: 14.5px;">Forward</p>
+              </button>
+              <button id="page-refresh" style="display: inline-block; text-decoration: none; color: rgba(255, 255, 255, 0.8); font-size: 1.2em; padding: 12px 22px; border: 2px solid #3a3a3a; border-radius: 5px; transition: 0.25s; background: rgba(35, 35, 35); cursor: pointer; font: inherit; font-weight: 500; position: relative;">
+                <ion-icon
+                  name="refresh-outline"
+                  class="icon hover-focus1"
+                  style="font-size: 1.2rem; padding: 0.4rem; border-radius: 6px; transition: 0.15s ease-in-out;"
+                ></ion-icon>
+                <p class="tooltip" style="padding: 6.5px 8px; position: absolute; top: 24px; left: 50%; transform: translateX(-50%); text-align: center; background: #464141; color: rgba(255, 255, 255, 0.834); visibility: hidden; opacity: 0; transition: 0.15s ease; border-radius: 5px; font-size: 14.5px;">Refresh</p>
+              </button>
+              <button id="options-btn" style="display: inline-block; text-decoration: none; color: rgba(255, 255, 255, 0.8); font-size: 1.2em; padding: 12px 22px; border: 2px solid #3a3a3a; border-radius: 5px; transition: 0.25s; background: rgba(35, 35, 35); cursor: pointer; font: inherit; font-weight: 500; position: relative;">
+                <ion-icon
+                  name="menu-outline"
+                  class="icon hover-focus1"
+                  style="font-size: 1.2rem; padding: 0.4rem; border-radius: 6px; transition: 0.15s ease-in-out;"
+                ></ion-icon>
+                <p class="tooltip" style="padding: 6.5px 8px; position: absolute; top: 24px; left: 50%; transform: translateX(-50%); text-align: center; background: #464141; color: rgba(255, 255, 255, 0.834); visibility: hidden; opacity: 0; transition: 0.15s ease; border-radius: 5px; font-size: 14.5px;">Menu</p>
+              </button>
+            </span>
+          </span>
+          <form id="url-form" style="padding: 1rem 0; border-bottom: 0.5px solid rgba(247, 205, 205, 0.156);">
+            <input
+              type="text"
+              id="url-input"
+              onfocus="this.setSelectionRange(0, this.value.length)"
+              class="hover-focus2"
+              placeholder="Search or enter URL"
+              autocomplete="off"
+              autocorrect="off"
+              spellcheck="false"
+              style="background-color: rgba(226, 226, 226, 0.15); border: none; outline: none; color: inherit; font: inherit; padding: 0.5rem; box-sizing: border-box; border-radius: 6px; font-size: 0.8rem; width: 100%; transition: 0.15s ease-in-out;"
+            />
+          </form>
+          <button id="new-tab" class="hover-focus2" style="width: 100%; margin-top: 1rem; border-radius: 6px; background-color: rgba(226, 226, 226, 0.15); border: none; outline: none; color: inherit; font: inherit; padding: 0.5rem; display: flex; justify-content: flex-start; align-items: center; gap: 0.5rem; transition: 0.15s ease-in-out;">
+            <ion-icon name="add-outline" class="icon" style="font-size: 1.2rem;"></ion-icon>
+            <span>New Tab</span>
+          </button>
+        </div>
+        <div id="tab-list" style="height: 70vh; overflow: scroll; width: 100%; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; gap: 0.5rem;"></div>
+      </header>
+    </div>
+        <div id="menu-overlay" style="position: fixed; top: 48px; left: 0; width: calc(20vw + 10px); height: calc(100% - 48px); background-color: #000000; transform: translateX(-100%); transition: 0.15s ease; z-index: 1000; padding: 20px; box-sizing: border-box;">
+      <div class="option" id="devtools-option" style="color: white; margin-bottom: 5px; cursor: pointer; padding: 0.5rem; background: rgba(226, 226, 226, 0.15); transition: 0.15s ease; border-radius: 6px; width: 95%;">Developer Tools</div>
+      <div class="option" id="abc-option" style="color: white; margin-bottom: 5px; cursor: pointer; padding: 0.5rem; background: rgba(226, 226, 226, 0.15); transition: 0.15s ease; border-radius: 6px; width: 95%;">Open in about:blank</div>
+      <div class="option" id="git-option" style="color: white; margin-bottom: 5px; cursor: pointer; padding: 0.5rem; background: rgba(226, 226, 226, 0.15); transition: 0.15s ease; border-radius: 6px; width: 95%;">GitHub</div>
+    </div>
+    <script>
+      const optionsBtn = document.getElementById("options-btn");
+      const overlay = document.getElementById("menu-overlay");
+      optionsBtn.addEventListener("click", () => {
+        overlay.classList.toggle("active");
+      });
+    </script>
+  </body>
+</html>
