@@ -1,5 +1,5 @@
 services:
-  - name: uv-static
+  - name: zakas-site
     type: web
     runtime: static
     env: static
