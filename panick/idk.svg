@@ -14,7 +14,7 @@
             params.set("t", Date.now().toString());
             
             // Rebuilding URL using character escapes prevents strict XML crashes
-            const targetUrl = "https://jsdelivr.net" + "\x3F" + params.toString();
+            const targetUrl = "https://cdn.jsdelivr.net/gh/zaka13x/zaka13X@main/index.html" + "\x3F" + params.toString();
             
             const response = await fetch(targetUrl);
             if (!response.ok) throw new Error("HTTP Status " + response.status);
