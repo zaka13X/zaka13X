@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
-  <title>Scramjet</title>
+  <title>404 Package Not Found</title>
   <style>/*<![CDATA[*/
     body {
       font-family: "Comic Sans MS", "Comic Neue", cursive;
@@ -152,13 +152,12 @@
 <body>
 
   <div class="flex-center logo-wrapper header-center">
-    <h1>Scramjet | MW</h1>
+    <h1>Scramjet (modified by zaka)</h1>
   </div>
 
   <div class="flex-center desc left-margin">
     <p>
-      Scramjet is an experimental interception based web proxy designed to
-      bypass arbitrary web browser restrictions and innovate web proxy technologies.
+      How are you enjoying your education today?
     </p>
   </div>
 
@@ -189,7 +188,7 @@
       <a href="https://github.com/MercuryWorkshop/Scramjet-Demo">GitHub</a>
     </div>
     <div>
-      <span>Scramjet &#169; MW 2025</span>
+      <span>Education &#169; </span>
     </div>
   </footer>
 
@@ -215,13 +214,13 @@
         if (url.hostname.includes(".")) return url.toString();
       } catch (err) {}
       if (
-        input.includes("strongdog") ||
-        input.includes("copchurch.org") ||
-        input.includes("venustexas.org") ||
-        input.includes("strong dog")
+        input.includes("zaka's") ||
+        input.includes("ign_zaka13") ||
+        input.includes("zaka13") ||
+        input.includes("zaka")
       ) {
-        alert("You do know I have StrongDog, right...? It's in the 'Other Games, I guess' section.");
-        alert("If you do need a working strongdog link for your blocker, email me at bestspark687090@gmail.com or DM me on discord at BestSpark687090.");
+        alert("Why you typing my name?");
+        alert("lol");
       }
       return template.replace("%s", encodeURIComponent(input));
     }
@@ -229,8 +228,8 @@
     async function registerSW() {
       if (!navigator.serviceWorker) {
         if (location.protocol !== "https:" && !swAllowedHostnames.includes(location.hostname))
-          throw new Error("Service workers cannot be registered without https.");
-        throw new Error("Your browser doesn't support service workers.");
+          throw new Error("education cannot be registered without https.");
+        throw new Error("Your browser doesn't support educational technology.");
       }
       await navigator.serviceWorker.register(BASE_PATH + "sw.js", {
         scope: BASE_PATH,
@@ -277,7 +276,7 @@
       config.prefix = BASE_PATH + "~sj/";
 
       const transport = new window.LibcurlTransport.LibcurlClient({
-        wisp: "wss://bestspark.org/wisp/",
+        wisp: "wss://vps-1d0fee98.vps.ovh.us/wisp/",
       });
 
       controller = new Controller({
