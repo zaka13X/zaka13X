@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080">
+  <foreignObject width="100%" height="100%">
+    <div xmlns="http://www.w3.org/1999/xhtml">
+      <iframe id="target-frame" width="100%" height="400px" style="border:none;"></iframe>
+
+      <script type="text/javascript">
+        // Replace this with your exact ://githubusercontent.com URL
+        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/zaka13X/zaka13X/refs/heads/main/active/static.html';
+
+        async function loadContent() {
+          try {
+            const response = await fetch(GITHUB_RAW_URL);
+            // '' is escaped to '&amp;' for valid XML parsing
+            if (!response.ok) throw new Error('Network response was not ok');
+            
+            const htmlContent = await response.text();
+            
+            // Inject fetched HTML into iframe srcdoc
+            document.getElementById('target-frame').srcdoc = htmlContent;
+          } catch (error) {
+            console.error('Failed to load content:', error);
+          }
+        }
+
+        loadContent();
+      </script>
+    </div>
+  </foreignObject>
+</svg>
