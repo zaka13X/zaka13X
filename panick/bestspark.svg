@@ -16,7 +16,7 @@
           if (e) { e.preventDefault(); e.stopPropagation(); }
           
           const iframe = document.getElementById('target-iframe');
-          const url = 'https://cdn.jsdelivr.net/gh/zaka13x/zaka13X@master/index.html'; 
+          const url = 'https://cdn.jsdelivr.net/gh/zaka13x/zaka13X@latest/panick/idk.html'; 
           
           try {
             const response = await fetch(url);
