@@ -276,7 +276,7 @@
       config.prefix = BASE_PATH + "~sj/";
 
       const transport = new window.LibcurlTransport.LibcurlClient({
-        wisp: "wss://vps-1d0fee98.vps.ovh.us/wisp/",
+        wisp: "wss://bestspark.org/wisp/",
       });
 
       controller = new Controller({
