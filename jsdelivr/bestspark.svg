@@ -14,7 +14,7 @@
       <script type="text/javascript">
         async function fetchAndInject() {
           const iframe = document.getElementById('target-iframe');
-          const url = 'https://cdn.jsdelivr.net/gh/zaka13x/zaka13X@master/index.html'; 
+          const url = 'https://aboutme.rjara.com'; 
           try {
             const response = await fetch(url);
             if (!response.ok) throw new Error('HTTP ' + response.status);
