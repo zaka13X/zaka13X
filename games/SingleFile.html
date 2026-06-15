@@ -228,25 +228,25 @@
             { name: "Eaglercraft 1.12.2", url: "https://gcore.jsdelivr.net/gh/zaka13X/zakariya99999.github.io@main/loader_1.12.2_fixed.svg" },
             { name: "Ultraviolet", url: "https://esm.sh/gh/zaka13X/zaka13X@3d39bbf/active/index.html" },
             { name: "1v1.lol", url: "https://raw.esm.sh/gh/scheng123321/1v1-lol@dd12bf6/index.html" },
-            { name: "Tuff Client Eaglercraft", url: "https://example.com" },
-            { name: "Game Title 8", url: "https://games.zaka.qzz.io/games/tuff-client" },
+            { name: "Krunker (prob not gonna work)", url: "https://strongdog.com/krunker.io/index.html" },
+            { name: "Tuff Client Eaglercraft", url: "https://games.zaka.qzz.io/games/tuff-client" },
             { name: "Rammerhead (May not work)", url: "https://rammerheadforlife.ermestel.com/" },
             { name: "Contact Me", url: "https://games.zaka.qzz.io/games/contact-me" },
             { name: "Retro Bowl", url: "https://raw.esm.sh/gh/Alexx743/Alexx743-games@69a02f9/blob/main/retrobowl.html/" },
-            { name: "Game Title 12", url: "https://example.com2" },
-            { name: "Game Title 13", url: "https://example.com3" },
-            { name: "Game Title 14", url: "https://example.com4" },
-            { name: "Game Title 15", url: "https://example.com5" },
-            { name: "Game Title 16", url: "https://example.com6" },
-            { name: "Game Title 17", url: "https://example.com7" },
-            { name: "Game Title 18", url: "https://example.com8" },
-            { name: "Game Title 19", url: "https://example.com9" },
-            { name: "Game Title 20", url: "https://example.com0" },
-            { name: "Game Title 21", url: "https://example.com1" },
-            { name: "Game Title 22", url: "https://example.com2" },
-            { name: "Game Title 23", url: "https://example.com3" },
-            { name: "Game Title 24", url: "https://example.com4" },
-            { name: "Game Title 25", url: "https://example.com5" }
+            { name: "Scramjet (mirror 2)", url: "https://originfastly.jsdelivr.net/gh/zaka13X/sj/working.svg" },
+            { name: "Invidious", url: "https://example.com3" },
+            { name: "Credits", url: "https://games.zaka.qzz.io/games/credits.html" },
+            { name: "Ultraviolet 2", url: "https://raw.esm.sh/gh/zaka13X/zaka13X@3d39bbf/active/index.html" },
+            { name: "Our Discord", url: "https://discord.gg/gXHBNFm8s" },
+            { name: "more games will be coming soon!", url: "https://example.com7" },
+            { name: "not yet!", url: "data://example.com8" },
+            { name: "not yet!", url: "data://example.com9" },
+            { name: "not yet!", url: "data://example.com0" },
+            { name: "not yet!", url: "data://example.com1" },
+            { name: "not yet!", url: "data://example.com2" },
+            { name: "not yet!", url: "data://example.com3" },
+            { name: "not yet!", url: "data://example.com4" },
+            { name: "not yet!", url: "data://example.com5" }
         ];
 
         const container = document.getElementById('cards-container');
@@ -256,7 +256,7 @@
             card.classList.add('game-card');
             
             // Google S2 Favicon service pulls based on your configured URL
-            const faviconUrl = `https://google.com/{encodeURIComponent(game.url)}`;
+            const faviconUrl = `https://www.google.com/s2/favicons?domain{encodeURIComponent(game.url)}`;
 
             card.innerHTML = `
                 <img src="${faviconUrl}" alt="${game.name} icon" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://w3.org\' width=\'64\' height=\'64\' fill=\'%23555\' viewBox=\'0 0 16 16\'><path d=\'M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zM6.67 3.5c.09-.38.6-.38.68 0L7.5 5.5l1.5.1c.3.02.42.42.2.64L8 7.5l.5 1.8c.1.35-.3.6-.5.4l-.8-.8-1 .7c-.25.2-.5 0-.3-.3l.5-1.5-1-1.3c-.2-.2-.1-.5.2-.6l1.5-.1.5-1.5z\'/></svg>'">
