@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>zakas games</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Particle Background */
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10px) translateX(0);
+                opacity: 0;
+            }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% {
+                transform: translateY(100vh) translateX(var(--random-x));
+                opacity: 0;
+            }
+        }
+
+        /* Header */
+        header {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Grid Container */
+        .grid-container {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 25px;
+            padding: 20px 50px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Game Card */
+        .game-card {
+            background: rgba(20, 20, 20, 0.8);
+            border: 2px solid #333;
+            border-radius: 12px;
+            height: 160px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            border-color: #fff;
+            box-shadow: 0 15px 30px rgba(255, 255, 255, 0.2);
+        }
+
+        .game-card img {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+
+        .game-card span {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #ddd;
+            word-break: break-all;
+        }
+
+        /* Iframe Modal */
+        #iframe-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 100;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            background-color: #111;
+            border-bottom: 2px solid #333;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            background: #222;
+            color: #fff;
+            border: 2px solid #444;
+            font-size: 1.8rem;
+            font-weight: bold;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background-color: #ff3333;
+            border-color: #ff3333;
+            transform: scale(1.05);
+        }
+
+        iframe {
+            width: 100%;
+            height: calc(100vh - 75px);
+            border: none;
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Particle Container -->
+    <div id="particles"></div>
+
+    <header>
+        <h1>zaka's games</h1>
+    </header>
+
+    <!-- Game Cards -->
+    <div class="grid-container" id="cards-container"></div>
+
+    <!-- Iframe Modal -->
+    <div id="iframe-modal">
+        <div class="modal-header">
+            <span class="modal-title" id="modal-title">Game Title</span>
+            <button class="close-btn" onclick="closeGame()">&times;</button>
+        </div>
+        <iframe id="game-frame" src=""></iframe>
+    </div>
+
+    <script>
+        // --- Particle Generation ---
+        const particleContainer = document.getElementById('particles');
+        const particleCount = 60;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            
+            const size = Math.random() * 3 + 1;
+            const duration = Math.random() * 5 + 5;
+            const delay = Math.random() * 5;
+            const startX = Math.random() * 100;
+            const randomXOffset = (Math.random() - 0.5) * 200;
+
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${startX}%`;
+            particle.style.animationDuration = `${duration}s`;
+            particle.style.animationDelay = `${delay}s`;
+            particle.style.setProperty('--random-x', `${randomXOffset}px`);
+
+            particleContainer.appendChild(particle);
+        }
+
+        // --- Central Game List Configuration ---
+        // Change the 'name' and 'url' fields below for your games.
+        // The script will automatically pull the favicon based on the URL provided.
+        const games = [
+            { name: "Soundboard", url: "https://rawcdn.githack.com/genizy/soundboard/1b365ccfe8417bc3349426b1be40dff77f6a6437/index.html" },
+            { name: "Scramjet", url: "https://gcore.jsdelivr.net/gh/zaka13X/sj/working.svg" },
+            { name: "Eaglercraft 1.8", url: "https://gcore.jsdelivr.net/gh/zaka13X/zakariya99999.github.io@main/loader_1.8.8_fixed.svg" },
+            { name: "Eaglercraft 1.12.2", url: "https://gcore.jsdelivr.net/gh/zaka13X/zakariya99999.github.io@main/loader_1.12.2_fixed.svg" },
+            { name: "Ultraviolet", url: "https://esm.sh/gh/zaka13X/zaka13X@3d39bbf/active/index.html" },
+            { name: "1v1.lol", url: "https://raw.esm.sh/gh/scheng123321/1v1-lol@dd12bf6/index.html" },
+            { name: "Tuff Client Eaglercraft", url: "https://example.com" },
+            { name: "Game Title 8", url: "https://games.zaka.qzz.io/games/tuff-client" },
+            { name: "Rammerhead (May not work)", url: "https://rammerheadforlife.ermestel.com/" },
+            { name: "Contact Me", url: "https://games.zaka.qzz.io/games/contact-me" },
+            { name: "Retro Bowl", url: "https://raw.esm.sh/gh/Alexx743/Alexx743-games@69a02f9/blob/main/retrobowl.html/" },
+            { name: "Game Title 12", url: "https://example.com2" },
+            { name: "Game Title 13", url: "https://example.com3" },
+            { name: "Game Title 14", url: "https://example.com4" },
+            { name: "Game Title 15", url: "https://example.com5" },
+            { name: "Game Title 16", url: "https://example.com6" },
+            { name: "Game Title 17", url: "https://example.com7" },
+            { name: "Game Title 18", url: "https://example.com8" },
+            { name: "Game Title 19", url: "https://example.com9" },
+            { name: "Game Title 20", url: "https://example.com0" },
+            { name: "Game Title 21", url: "https://example.com1" },
+            { name: "Game Title 22", url: "https://example.com2" },
+            { name: "Game Title 23", url: "https://example.com3" },
+            { name: "Game Title 24", url: "https://example.com4" },
+            { name: "Game Title 25", url: "https://example.com5" }
+        ];
+
+        const container = document.getElementById('cards-container');
+
+        games.forEach((game) => {
+            const card = document.createElement('div');
+            card.classList.add('game-card');
+            
+            // Google S2 Favicon service pulls based on your configured URL
+            const faviconUrl = `https://google.com/{encodeURIComponent(game.url)}`;
+
+            card.innerHTML = `
+                <img src="${faviconUrl}" alt="${game.name} icon" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://w3.org\' width=\'64\' height=\'64\' fill=\'%23555\' viewBox=\'0 0 16 16\'><path d=\'M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zM6.67 3.5c.09-.38.6-.38.68 0L7.5 5.5l1.5.1c.3.02.42.42.2.64L8 7.5l.5 1.8c.1.35-.3.6-.5.4l-.8-.8-1 .7c-.25.2-.5 0-.3-.3l.5-1.5-1-1.3c-.2-.2-.1-.5.2-.6l1.5-.1.5-1.5z\'/></svg>'">
+                <span>${game.name}</span>
+            `;
+
+            card.addEventListener('click', () => {
+                openGame(game.url, game.name);
+            });
+
+            container.appendChild(card);
+        });
+
+        function openGame(url, title) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('game-frame').src = url;
+            document.getElementById('iframe-modal').style.display = 'flex';
+        }
+
+        function closeGame() {
+            document.getElementById('iframe-modal').style.display = 'none';
+            document.getElementById('game-frame').src = '';
+        }
+    </script>
+</body>
+</html>
