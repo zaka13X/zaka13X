@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Link Checker</title>
+<meta name="description" content="Free link checker featuring filters like Lightspeed and GoGuardian.">
+<meta name="theme-color" content="#4a78c2">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Link Checker">
+<meta property="og:title" content="Link Checker">
+<meta property="og:description" content="Free link checker featuring filters like Lightspeed and GoGuardian.">
+<meta property="og:url" content="https://getuwu.christmas">
+
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    background: #0d0d11; /* Dark theme canvas layout */
+    color: #ffffff;
+    margin: 0;
+    padding: 32px 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+  #particles {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .wrap {
+    width: 100%;
+    max-width: 680px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 24px;
+    z-index: 2;
+    position: relative;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+  h1 {
+    margin: 0 0 4px;
+    font-size: 20px;
+    color: #fff;
+  }
+  p.sub {
+    margin: 0 0 20px;
+    color: #b0b3b8;
+    font-size: 13px;
+  }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #e4e6eb;
+  }
+  input[type="text"] {
+    width: 100%;
+    padding: 11px 12px;
+    font-size: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.4);
+    color: #fff;
+    margin-bottom: 14px;
+    font-family: inherit;
+    outline: none;
+  }
+  button {
+    background: #4a78c2;
+    color: #fff;
+    border: 0;
+    padding: 11px 22px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    width: 100%;
+  }
+  button:hover { background: #3d68ad; }
+  button:disabled { background: #3a3b40; color: #777; cursor: default; }
+  .results {
+    margin-top: 22px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 16px;
+  }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    background: rgba(0, 0, 0, 0.25);
+  }
+  .row .name { font-weight: 600; color: #fff; }
+  .status {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    margin-left: 12px;
+  }
+  .ok { background: rgba(31, 111, 42, 0.2); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.2); }
+  .bad { background: rgba(168, 35, 35, 0.2); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.2); }
+  .neutral { background: rgba(230, 233, 238, 0.1); color: #ccc; }
+  .target {
+    font-size: 13px;
+    color: #9ea4b0;
+    margin-bottom: 12px;
+    word-break: break-all;
+  }
+</style>
+</head>
+<body>
+<canvas id="particles"></canvas>
+
+<div class="wrap">
+  <div class="head">
+    <div>
+      <h1>Link Checker</h1>
+      <p class="sub">Check whether a link is allowed or blocked on Lightspeed via un-truncated pathing.</p>
+    </div>
+  </div>
+
+  <label for="url">URL</label>
+  <input type="text" id="url" placeholder="https://example.com">
+
+  <button id="go">Check Status</button>
+
+  <div class="results" id="results" style="display:none;"></div>
+</div>
+
+<script>
+  const goBtn = document.getElementById('go');
+  const resultsDiv = document.getElementById('results');
+  const urlInput = document.getElementById('url');
+
+  goBtn.onclick = async () => {
+    let rawInputUrl = urlInput.value.trim();
+
+    if (!rawInputUrl) {
+        alert("Please enter a URL.");
+        return;
+    }
+
+    // Force strict preservation of the protocol prefix
+    if (!/^https?:\/\//i.test(rawInputUrl)) {
+        rawInputUrl = 'https://' + rawInputUrl;
+    }
+    
+    resultsDiv.innerHTML = `<div class="target">Routing full un-truncated parameter stream...</div>`;
+    resultsDiv.style.display = "block";
+    goBtn.disabled = true;
+
+    // NO MORE TRUNCATION: Encodes the full raw string intact, query parameters included
+    const rawEncodedValue = encodeURIComponent(rawInputUrl);
+
+    // FIXED API STRING PATTERN: Built exactly to your requested layout parameter requirements
+    const baseApiUrl = "https://getuwu.christmas/api/v1/check?url=" + rawEncodedValue + "&filter=lightspeed";
+
+    // HIGH-SPEED CLOUD TUNNEL: Resolves static GitHub Pages origin blocks instantly
+    const proxyEndpoint = "https://cors-anywhere.herokuapp.com/" + baseApiUrl;
+ 
+    try {
+        const response = await fetch(proxyEndpoint, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        
+        if (!response.ok) {
+            if (response.status === 403) {
+                throw new Error("Handshake expired. Click the demo access toggle switch page.");
+            }
+            throw new Error(`HTTP error status code: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        let htmlOutput = `<div class="target">Target Host: <code>${data.target || rawInputUrl}</code></div>`;
+
+        // FIXED UNPACK SCHEMATICS: Pulls elements right out of index 0 of the results array payload
+        if (data && data.results && Array.isArray(data.results) && data.results.length > 0) {
+            const item = data.results[0]; 
+            
+            let statusClass = "neutral";
+            let statusText = "UNKNOWN";
+
+            if (item.blocked === true) {
+                statusClass = "bad";
+                statusText = "BLOCKED";
+            } else if (item.blocked === false) {
+                statusClass = "ok";
+                statusText = "ALLOWED";
+            }
+
+            htmlOutput += `
+                <div class="row">
+                    <div>
+                        <span class="name">${item.label || item.filter}</span>
+                        <div class="meta">Category: ${item.category || "Unknown"} | Latency: ${item.ms || 0} ms</div>
+                    </div>
+                    <span class="status ${statusClass}">${statusText}</span>
+                </div>
+            `;
+        } else {
+            htmlOutput += `
+                <div class="row">
+                    <div>
+                        <span class="name">Payload Exception</span>
+                        <div class="meta">The request succeeded but internal array properties could not map.</div>
+                    </div>
+                    <span class="status bad">EMPTY</span>
+                </div>
+            `;
+        }
+
+        resultsDiv.innerHTML = htmlOutput;
+
+    } catch (error) {
+        console.error("Fetch tracking failure:", error);
+        
+        let troubleshootingText = "The proxy server dropped the connection. Verify your system local firewall settings.";
+        if (error.message.includes("Handshake expired")) {
+            troubleshootingText = `🔒 <strong>Action Required:</strong> You must activate temporary access to the proxy token before running lookups.<br><br><a href="https://herokuapp.comcorsdemo" target="_blank" style="color: #4a78c2; font-weight: bold;">Click here to open the CORS Activation Page</a>, click the unlock button, then return here and hit Check again.`;
+        }
+
+        resultsDiv.innerHTML = `
+            <div class="target">Target Host: <code>${rawInputUrl}</code></div>
+            <div class="row">
+                <div>
+                    <span class="name">API Request Aborted</span>
+                    <div class="meta" style="line-height: 1.4; margin-top: 5px;">${troubleshootingText}</div>
+                </div>
+                <span class="status bad">ERROR</span>
+            </div>
+        `;
+    } finally {
+        goBtn.disabled = false;
+    }
+  };
+
+  // --- Background Particle Canvas System ---
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  let particleArray = [];
+
+  function initCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', () => { initCanvas(); setupParticles(); });
+  initCanvas();
+
+  class StarParticle {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 1.8 + 0.5;
+        this.speedX = Math.random() * 0.4 - 0.2;
+        this.speedY = Math.random() * 0.4 - 0.2;
+        this.alpha = Math.random() * 0.5 + 0.2;
+    }
+    move() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x > canvas.width) this.x = 0;
+        if (this.x < 0) this.x = canvas.width;
+        if (this.y > canvas.height) this.y = 0;
+        if (this.y < 0) this.y = canvas.height;
+    }
+    render() {
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+  }
+
+  function setupParticles() {
+    particleArray = [];
+    const totalCount = Math.floor((canvas.width * canvas.height) / 9500);
+    for (let i = 0; i < totalCount; i++) { particleArray.push(new StarParticle()); }
+  }
+
+  function loopAnimation() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < particleArray.length; i++) {
+        particleArray[i].move();
+        particleArray[i].render();
+    }
+    requestAnimationFrame(loopAnimation);
+  }
+  setupParticles();
+  loopAnimation();
+</script>
+</body>
+</html>
