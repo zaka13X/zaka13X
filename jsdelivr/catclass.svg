@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <defs>
+    <style>
+      .container {
+        width: 100%;
+        height: 100%;
+      }
+      iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+    </style>
+  </defs>
+  
+  <!-- 
+    The foreignObject allows us to embed arbitrary HTML/XHTML, 
+    acting effectively as an iframe wrapper within the SVG.
+  -->
+  <foreignObject class="container" x="0" y="0">
+    <body xmlns="http://www.w3.org/1999/xhtml" style="margin: 0; padding: 0; width: 100%; height: 100%;">
+      <!-- 
+        Change the 'src' below to the URL you want to iframe.
+        Note: The target website must allow being iframed (not block X-Frame-Options).
+      -->
+      <iframe src="https://green-cat.b-cdn.net/" scrolling="auto"></iframe>
+    </body>
+  </foreignObject>
+</svg>
