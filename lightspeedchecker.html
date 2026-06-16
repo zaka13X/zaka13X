@@ -164,7 +164,7 @@
         rawInputUrl = 'https://' + rawInputUrl;
     }
     
-    resultsDiv.innerHTML = `<div class="target">Routing full un-truncated parameter stream...</div>`;
+    resultsDiv.innerHTML = `<div class="target">Loading...</div>`;
     resultsDiv.style.display = "block";
     goBtn.disabled = true;
 
@@ -184,7 +184,7 @@
         
         if (!response.ok) {
             if (response.status === 403) {
-                throw new Error("Handshake expired. Click the demo access toggle switch page.");
+                throw new Error("Handshake expired. Click the demo access toggle switch page. at https://cors-anywhere.herokuapp.com.");
             }
             throw new Error(`HTTP error status code: ${response.status}`);
         }
@@ -235,7 +235,7 @@
         
         let troubleshootingText = "The proxy server dropped the connection. Verify your system local firewall settings.";
         if (error.message.includes("Handshake expired")) {
-            troubleshootingText = `🔒 <strong>Action Required:</strong> You must activate temporary access to the proxy token before running lookups.<br><br><a href="https://herokuapp.comcorsdemo" target="_blank" style="color: #4a78c2; font-weight: bold;">Click here to open the CORS Activation Page</a>, click the unlock button, then return here and hit Check again.`;
+            troubleshootingText = `🔒 <strong>Action Required:</strong> You must activate temporary access to the proxy token before running lookups.<br><br><a href="https://cors-anywhere.herokuapp.com" target="_blank" style="color: #4a78c2; font-weight: bold;">Click here to open the Activation Page</a>, then return here and hit Check again.`;
         }
 
         resultsDiv.innerHTML = `
