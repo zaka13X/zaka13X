@@ -17,7 +17,7 @@
     <![CDATA[
     document.addEventListener("DOMContentLoaded", () => {
       // REPLACE WITH YOUR ACTUAL GITHUB RAW URL
-      const gitHubRawUrl = "https://githubusercontent.com";
+      const gitHubRawUrl = "https://raw.githubusercontent.com/zaka13X/zaka13X/refs/heads/main/games/SingleFile.html";
 
       fetch(gitHubRawUrl)
         .then(response => {
