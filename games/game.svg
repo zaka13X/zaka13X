@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+  <!-- CSS resets to ensure smooth fluid scaling across browsers -->
+  <style>
+    html, body, div { margin: 0; padding: 0; box-sizing: border-box; }
+    .html-container { width: 100%; height: 100%; font-family: sans-serif; }
+  </style>
+
+  <foreignObject x="0" y="0" width="100" height="100">
+    <!-- Target container for the dynamic content injection -->
+    <div id="content-target" xmlns="http://www.w3.org/1999/xhtml" class="html-container">
+      <p style="padding: 10px; color: #666;">Loading content from GitHub...</p>
+    </div>
+  </foreignObject>
+
+  <!-- Embedded script execution logic -->
+  <script type="text/javascript">
+    <![CDATA[
+    document.addEventListener("DOMContentLoaded", () => {
+      // REPLACE WITH YOUR ACTUAL GITHUB RAW URL
+      const gitHubRawUrl = "https://githubusercontent.com";
+
+      fetch(gitHubRawUrl)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP network error! Status: ${response.status}`);
+          }
+          return response.text();
+        })
+        .then(htmlData => {
+          // Target the inner container and securely inject the fetched markup
+          const container = document.getElementById("content-target");
+          if (container) {
+            container.innerHTML = htmlData;
+          }
+        })
+        .catch(error => {
+          console.error("Failed to fetch or inject content:", error);
+          const container = document.getElementById("content-target");
+          if (container) {
+            container.innerHTML = `<p style="color: red; padding: 10px;">Error loading content.</p>`;
+          }
+        });
+    });
+    ]]>
+  </script>
+</svg>
