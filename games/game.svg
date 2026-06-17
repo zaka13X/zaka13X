@@ -6,8 +6,8 @@
     .launch-btn:hover { background-color: #218838; }
   </style>
 
-  <foreignObject x="0" y="0" width="75" height="75">
-    <div xmlns="http://www.w3.org/2000/svg" class="btn-container">
+  <foreignObject x="0" y="0" width="100" height="100">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="btn-container">
       <button id="launch-trigger" class="launch-btn">Launch</button>
     </div>
   </foreignObject>
