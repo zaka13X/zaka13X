@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coding on CodeHS!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .bookmarklet {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: move;
+        }
+        .bookmarklet:hover {
+            background-color: #218838;
+        }
+        p {
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Blob opener</h2>
+    <p><code></code> idk what to put lol</p>
+    
+    <!-- Test 1: Direct Standalone Button Click -->
+    <h3>⬇️</h3>
+    <button onclick="launchBlobIframe()">Launch Blob</button>
+
+    <hr style="border: 0; border-top: 1px solid #ccc; margin: 30px 0;">
+
+    <!-- Test 2: Bookmarklet Drag and Drop -->
+    <h3>Bookmarklet method</h3>
+    <p>Drag the green button below into your bookmarks bar and click it</p>
+    <a class="bookmarklet" href="javascript:(function(){const target='https://cdn.esm.sh/gh/zaka13X/zaka13X/index.html';const cleanUrl=target.startsWith('http')?target:'https://'+target;window.open(URL.createObjectURL(new Blob([`<iframe src='${cleanUrl}' style='width:100vw;height:100vh;border:none;position:fixed;top:0;left:0;'></iframe>`],{type:'text/html'})),'_blank');})();">Drag Me to Bookmarks Bar</a>
+</div>
+
+<script>
+    function launchBlobIframe() {
+        // Change this URL to your desired target site (Keep https://)
+        const targetUrl = "https://cdn.esm.sh/gh/zaka13X/zaka13X/index.html"; 
+        
+        // Formats the URL string cleanly to avoid relative pathing 404s
+        const cleanUrl = targetUrl.startsWith('http') ? targetUrl : 'https://' + targetUrl;
+        
+        // Generates the blob and forces the target frame parameters
+        const blobContent = `<iframe src="${cleanUrl}" style="width:100vw;height:100vh;border:none;position:fixed;top:0;left:0;"></iframe>`;
+        const blobType = { type: 'text/html' };
+        const blobUrl = URL.createObjectURL(new Blob([blobContent], blobType));
+        
+        // Opens the newly constructed document array in an isolated window profile
+        window.open(blobUrl, '_blank');
+    }
+</script>
+
+</body>
+</html>
