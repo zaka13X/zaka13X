@@ -1,0 +1,51 @@
+<script>
+javascript:(function(){
+    // 1. URL of your CORS-enabled text/plain resource (e.g., jsDelivr raw file)
+    var targetUrl = 'https://gcore.jsdelivr.net/gh/zaka13X/zaka13X/index.html'; // Swap with your HTML source URL
+
+    // 2. Clear the browser page layout to prevent UI conflicts
+    document.documentElement.style.setProperty('overflow', 'hidden', 'important');
+    if (document.body) {
+        document.body.style.setProperty('overflow', 'hidden', 'important');
+    }
+
+    // 3. Create the full-screen iframe placeholder structure
+    var f = document.createElement('iframe');
+    f.style.position = 'fixed';
+    f.style.top = '0';
+    f.style.left = '0';
+    f.style.width = '100vw';
+    f.style.height = '100vh';
+    f.style.margin = '0';
+    f.style.padding = '0';
+    f.style.border = 'none';
+    f.style.zIndex = '2147483647';
+    f.style.backgroundColor = '#ffffff';
+
+    // 4. Fetch the raw text content from the network resource
+    fetch(targetUrl)
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('failed: ' + response.status);
+            }
+            return response.text(); // Read the payload strictly as text string
+        })
+        .then(function(rawTextContent) {
+            // 5. Inject the raw text string into srcdoc. 
+            // Chrome natively interprets srcdoc text strings as html, bypassing the origin MIME type check.
+            f.srcdoc = rawTextContent;
+            
+            // 6. Safely mount the configured frame to the page layout
+            var target = document.body || document.documentElement;
+            if (target) {
+                target.appendChild(f);
+            }
+        })
+        .catch(function(error) {
+            console.error('Failed to stream or inject resource:', error);
+            // Fallback display if the resource fails to load or CORS is blocked
+            f.srcdoc = '<!DOCTYPE html><html><body><h1 style="font-family:sans-serif;text-align:center;margin-top:20vh;">Failed to load resource content.</h1></body></html>';
+            (document.body || document.documentElement).appendChild(f);
+        });
+})();void(0);
+</script>
