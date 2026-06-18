@@ -1,9 +1,9 @@
-<svg xmlns="http://w3.org" width="100%" height="100%" viewBox="0 0 1920 1080">
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1920 1080">
   <!-- Solid background wrapper to match your application theme -->
   <rect width="100%" height="100%" fill="#121212" />
 
   <foreignObject x="0" y="0" width="100%" height="100%">
-    <html xmlns="http://w3.org" lang="en">
+    <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
       <head>
         <title>SVG Wrapper Container</title>
         <style>
