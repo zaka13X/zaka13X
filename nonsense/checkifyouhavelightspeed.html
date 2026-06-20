@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SSO Redirecting...</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        .log { margin-top: 10px; padding: 10px; border: 1px solid #ccc; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h2>Extension Asset Tester</h2>
+    <button onclick="testExtension()">Check if you have Lightspeed installed</button>
+    
+    <div id="output" class="log">Click the button to check</div>
+
+    <script>
+        function testExtension() {
+            const output = document.getElementById('output');
+            output.innerHTML = "Testing extension asset...";
+            
+            // 1. Set the extension ID
+            const extensionId = "gighmmpiobklfepjocnamgkkbiglidom"; // Example: AdBlock
+            
+            // 2. Set the path to the web accessible asset
+            const assetPath = "img/icon24.png";
+            
+            // 3. Combine into the full extension URL
+            const assetUrl = `chrome-extension://${extensionId}/${assetPath}`;
+
+            // 4. Try to load the asset using an Image object
+            const img = new Image();
+            
+            img.onload = function() {
+                output.innerHTML = "<span class='success'>You have the extension</span> rip bro";
+            };
+
+            img.onerror = function() {
+                output.innerHTML = "<span class='error'>You don't have the extension, which is a super good thing </span>";
+            };
+
+            img.src = assetUrl;
+        }
+    </script>
+
+</body>
+</html>
