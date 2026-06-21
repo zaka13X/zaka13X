@@ -33,7 +33,7 @@ const PRECACHE_URLS = [
   '/',
   '/index.html',
   '/styles.css',
-  '/app.js'
+  '/index.svg'
 ];
 
 self.addEventListener('install', (event) => {
