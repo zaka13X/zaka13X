@@ -20,7 +20,7 @@
       if (button) {
         button.addEventListener("click", () => {
           // REPLACE WITH YOUR ACTUAL GITHUB RAW URL
-          const gitHubRawUrl = "https://raw.githubusercontent.com/zaka13X/zaka13X/refs/heads/main/games/SingleFile.html";
+          const gitHubRawUrl = "https://raw.githubusercontent.com/zaka13X/zaka13X/refs/heads/main/games/123.html";
 
           button.textContent = "Loading...";
           button.disabled = true;
