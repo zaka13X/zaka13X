@@ -1,11 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
-  <!-- The foreignObject allows you to embed arbitrary HTML -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%">
+  <!-- The foreignObject acts as the viewport for your HTML document -->
   <foreignObject x="0" y="0" width="100%" height="100%">
-    <!-- The xmlns="http://w3.org" namespace is REQUIRED for HTML rendering -->
-    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family: sans-serif; padding: 20px; color: #333;">
-      
-      <!-- Paste your HTML below this line -->
-<!DOCTYPE html>
+    <!-- The XHTML namespace tells the browser to process the CDATA content as a webpage -->
+    <iframe xmlns="http://www.w3.org/1999/xhtml" 
+            style="border: none; width: 100%; height: 100%; min-height: 100vh; overflow: auto;"
+            srcdoc="<![CDATA[
+
+      <!-- PASTE YOUR ENTIRE HTML FILE BELOW THIS LINE -->
+      <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -54,8 +56,9 @@
 </body>
 
 </html>
-      <!-- Paste your HTML above this line -->
+      <!-- PASTE YOUR ENTIRE HTML FILE ABOVE THIS LINE -->
 
-    </div>
+    ]]>">
+    </iframe>
   </foreignObject>
 </svg>
