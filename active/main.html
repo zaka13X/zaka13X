@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classroom</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        /* Absolute pure black canvas background layout */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        /* Fixed full-screen particle view layer underneath text content */
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            background-color: #000000;
+        }
+        /* Foreground alignment container layout stacked on particles */
+        .container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 20px;
+            top: 50vh;
+            transform: translateY(-50%);
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 25px;
+            color: #ffffff;
+            letter-spacing: 0.05em;
+        }
+        form {
+            display: flex;
+            width: 100%;
+            background: #000000;
+            padding: 8px;
+            border-radius: 50px;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+            border: 2px solid #ffffff;
+            margin-bottom: 30px;
+        }
+        input[type="text"] {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #ffffff;
+            padding: 12px 20px;
+            font-size: 1rem;
+        }
+        input[type="text"]::placeholder {
+            color: #888888;
+        }
+        button.submit-btn {
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+            font-weight: bold;
+            padding: 12px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+        button.submit-btn:hover {
+            opacity: 0.9;
+        }
+        button.submit-btn:active {
+            transform: scale(0.97);
+        }
+        /* Shortcuts Structure Grid Styling */
+        .shortcut-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .shortcut-card {
+            background: #000000;
+            border: 2px solid #ffffff;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .shortcut-card:hover {
+            background: #111111;
+            transform: translateY(-2px);
+        }
+        .shortcut-icon {
+            font-size: 1.5rem;
+            margin-bottom: 6px;
+        }
+        .shortcut-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .status {
+            font-size: 0.9rem;
+            color: #666666;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Target Element background for Particle Animation Engine -->
+    <div id="particles-js"></div>
+
+    <div class="container">
+        <h1></h1>
+        
+        <form id="proxy-form">
+            <input type="text" id="url-input" placeholder="Search Google or type a URL..." required autocomplete="off">
+            <button type="submit" class="submit-btn">Go</button>
+        </form>
+
+        <div class="shortcut-grid">
+            <div class="shortcut-card" data-url="https://github.com">
+                <span class="shortcut-icon"></span>
+                <span class="shortcut-title">GitHub</span>
+            </div>
+            <div class="shortcut-card" data-url="https://gn-math.dev">
+                <span class="shortcut-icon"></span>
+                <span class="shortcut-title">gn-math</span>
+            </div>
+            <div class="shortcut-card" data-url="https://google.com">
+                <span class="shortcut-icon"></span>
+                <span class="shortcut-title">Google</span>
+            </div>
+            <div class="shortcut-card" data-url="https://discord.com">
+                <span class="shortcut-icon"></span>
+                <span class="shortcut-title">Discord</span>
+            </div>
+        </div>
+
+        <div class="status" id="status-message">Loading...</div>
+    </div>
+
+    <!-- Load external library CDNs and Ultraviolet bundle components -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@main/particles.min.js"></script>
+    <script src="uv/uv.config.js"></script>
+    <script src="uv/uv.bundle.js"></script>
+
+    <script>
+        // Initialize Particles.js configuration for solid white floating stars
+        particlesJS("particles-js", {
+            "particles": {
+                "number": {
+                    "value": 80,
+                    "density": { "enable": true, "value_area": 800 }
+                },
+                "color": { "value": "#ffffff" },
+                "shape": { "type": "circle" },
+                "opacity": {
+                    "value": 0.5,
+                    "random": true,
+                    "anim": { "enable": true, "speed": 1, "opacity_min": 0.1, "sync": false }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": { "enable": false }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#ffffff",
+                    "opacity": 0.2,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 2,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": { "enable": true, "mode": "grab" },
+                    "onclick": { "enable": true, "mode": "push" },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": { "distance": 140, "line_linked": { "opacity": 0.5 } },
+                    "push": { "particles_nb": 4 }
+                }
+            },
+            "retina_detect": true
+        });
+
+        // Form handler logic and SW elements
+        const form = document.getElementById('proxy-form');
+        const input = document.getElementById('url-input');
+        const status = document.getElementById('status-message');
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/uv/uv.sw.js', {
+                scope: __uv$config.prefix
+            }).then(() => {
+                status.innerText = "Proxy Service Worker is active and ready.";
+            }).catch((err) => {
+                status.innerText = "Failed to register Service Worker: " + err.message;
+            });
+        } else {
+            status.innerText = "Your browser does not support Service Workers.";
+        }
+
+        function launchProxy(rawUrl) {
+            let targetUrl = rawUrl.trim();
+            if (!/^https?:\/\//i.test(targetUrl)) {
+                if (targetUrl.includes('.') && !targetUrl.includes(' ')) {
+                    targetUrl = 'https://' + targetUrl;
+                } else {
+                    targetUrl = 'https://google.com' + encodeURIComponent(targetUrl);
+                }
+            }
+            const encodedUrl = __uv$config.prefix + __uv$config.encodeUrl(targetUrl);
+            window.location.href = encodedUrl;
+        }
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            launchProxy(input.value);
+        });
+
+        document.querySelectorAll('.shortcut-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const target = card.getAttribute('data-url');
+                input.value = target;
+                launchProxy(target);
+            });
+        });
+    </script>
+</body>
+</html>
