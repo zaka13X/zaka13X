@@ -1,9 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="100%" height="100%">
   <defs>
-    <!-- Store raw, unescaped HTML safely inside an XML CDATA block -->
+    <!-- 1. Store your raw HTML here safely -->
     <script id="html-source" type="text/plain">
       <![CDATA[
-      
       <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -232,7 +231,6 @@
     </script>
 </body>
 </html>
-    
       ]]>
     </script>
 
@@ -242,18 +240,20 @@
     </style>
   </defs>
 
+  <!-- 2. The target iframe container -->
   <foreignObject width="1000" height="1000" class="html-container">
-    <!-- The iframe starts empty and is populated on execution -->
     <iframe id="target-iframe" class="responsive-iframe"></iframe>
   </foreignObject>
 
-  <!-- Script to inject the raw CDATA text into the iframe's srcdoc -->
+  <!-- 3. Immediate execution script (No event listeners required) -->
   <script type="text/javascript">
     <![CDATA[
-    document.addEventListener("DOMContentLoaded", function() {
+    try {
       var rawHtml = document.getElementById("html-source").textContent;
       document.getElementById("target-iframe").srcdoc = rawHtml;
-    });
+    } catch (e) {
+      console.error("SVG Injection failed:", e);
+    }
     ]]>
   </script>
 </svg>
