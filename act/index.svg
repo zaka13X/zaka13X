@@ -1,250 +1,60 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%">
-  <!-- The foreignObject provides a responsive coordinate frame -->
-  <foreignObject width="1920" height="1080">
-    
-    <!-- 1. Open the HTML viewport layer natively inside the SVG -->
-    <div xmlns="http://www.w3.org/1999/xhtml" style="width: 100%; height: 100%; margin: 0; padding: 0;">
-      
-      <!-- 2. The CDATA block protects all raw, unmodified HTML, styles, and scripts -->
-      <![CDATA[
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+  <style>
+    html, body, div { margin: 0; padding: 0; box-sizing: border-box; }
+    .btn-container { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; font-family: sans-serif; }
+    .launch-btn { padding: 12px 24px; font-size: 16px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    .launch-btn:hover { background-color: #218838; }
+  </style>
 
-      <!-- ======================================================== -->
-      <!-- PASTE YOUR UNMODIFIED HTML, SCRIPTS, AND STYLES BELOW   -->
-      <!-- ======================================================== -->
-
-      <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>zaka13s site</title>
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body, html {
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            color: #fff;
-            font-family: 'Arial', sans-serif;
-            overflow: hidden;
-        }
-
-        /* Particle Background */
-        #particles-js {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-
-        /* Main Content Container */
-        .content-container {
-            position: relative;
-            z-index: 2;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding-top: 5vh;
-        }
-
-        h1 {
-            font-size: 4rem;
-            margin-bottom: 2rem;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-            transition: opacity 0.4s ease, transform 0.4s ease;
-        }
-
-        /* Centered Adaptive Iframe styling placed above the taskbar */
-        .iframe-container {
-            width: 85%;
-            height: calc(100vh - 280px);
-            background: #ffffff; 
-            border-radius: 15px;
-            overflow: hidden;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            display: none; /* Hidden initially */
-            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
-            margin-bottom: 140px; /* Forces spacing directly above the taskbar */
-            z-index: 10;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        /* Fixed Button Navigation Bar at Bottom */
-        .bottom-nav {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 25px;
-            z-index: 20;
-        }
-
-        .icon-box {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            width: 90px;
-            height: 90px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-
-        /* Custom SVG Icon Styling */
-        .icon-box svg {
-            width: 38px;
-            height: 38px;
-            fill: none;
-            stroke: #fff;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        /* Simple click/hover response */
-        .icon-box:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.4);
-            transform: translateY(-2px);
-        }
-
-        .icon-box:active {
-            transform: translateY(1px);
-        }
-    </style>
-</head>
-<body>
-
-    <!-- Particle JS Background Container -->
-    <div id="particles-js"></div>
-
-    <!-- Main Dynamic Interface -->
-    <div class="content-container">
-        <h1 id="welcomeTitle">Welcome</h1>
-        
-        <!-- Center Stage Iframe container -->
-        <div id="iframeWrapper" class="iframe-container">
-            <iframe id="mainIframe" src=""></iframe>
-        </div>
-
-        <!-- Bottom Action Navigation -->
-        <div class="bottom-nav">
-            <!-- Icon 1: Game Controller -->
-            <div class="icon-box" onclick="loadIframe('')">
-                <svg viewBox="0 0 24 24">
-                    <line x1="6" y1="12" x2="10" y2="12"></line>
-                    <line x1="8" y1="10" x2="8" y2="14"></line>
-                    <line x1="15" y1="13" x2="15.01" y2="13"></line>
-                    <line x1="18" y1="11" x2="18.01" y2="11"></line>
-                    <rect x="2" y="6" width="20" height="12" rx="3"></rect>
-                </svg>
-            </div>
-            
-            <!-- Icon 2: Browser/Web Globe -->
-            <div class="icon-box" onclick="loadIframe('https://gcore.jsdelivr.net/gh/zaka13X/sj@main/working.svg')">
-                <svg viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="2" y1="12" x2="22" y2="12"></line>
-                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                </svg>
-            </div>
-            
-            <!-- Icon 3: Settings Gear -->
-            <div class="icon-box" onclick="loadIframe('/settings.html')">
-                <svg viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="3"></circle>
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.52-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                </svg>
-            </div>
-        </div>
-    </div>
-
-    <!-- particles.js lib -->
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script>
-        // Initialize particles.js
-        particlesJS("particles-js", {
-            "particles": {
-                "number": { "value": 70, "density": { "enable": true, "value_area": 800 } },
-                "color": { "value": "#ffffff" },
-                "shape": { "type": "circle" },
-                "opacity": { "value": 0.4, "anim": { "enable": false } },
-                "size": { "value": 3, "random": true },
-                "line_linked": { "enable": true, "distance": 140, "color": "#ffffff", "opacity": 0.3, "width": 1 },
-                "move": { "enable": true, "speed": 2.5, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
-            },
-            "interactivity": {
-                "detect_on": "canvas",
-                "events": {
-                    "onhover": { "enable": true, "mode": "repulse" },
-                    "onclick": { "enable": true, "mode": "push" }
-                },
-                "modes": {
-                    "repulse": { "distance": 100, "duration": 0.4 }
-                }
-            },
-            "retina_detect": true
-        });
-
-        // Function to handle iframe switching and heading removal
-        function loadIframe(url) {
-            const title = document.getElementById('welcomeTitle');
-            const wrapper = document.getElementById('iframeWrapper');
-            const iframe = document.getElementById('mainIframe');
-            
-            // 1. Fade out and slide up the welcome text
-            if (title.style.display !== 'none') {
-                title.style.opacity = '0';
-                title.style.transform = 'translateY(-20px)';
-                
-                // Remove from document layout once transition completes
-                setTimeout(() => {
-                    title.style.display = 'none';
-                    // Expand iframe height slightly now that title is gone
-                    wrapper.style.height = 'calc(100vh - 180px)';
-                }, 400);
-            }
-
-            // 2. Load and smoothly display the iframe
-            iframe.src = url;
-            if (wrapper.style.display !== 'block') {
-                wrapper.style.display = 'block';
-                // Small delay to trigger CSS transition smoothly
-                setTimeout(() => {
-                    wrapper.style.opacity = '1';
-                    wrapper.style.transform = 'translateY(0)';
-                }, 50);
-            }
-        }
-    </script>
-</body>
-</html>
-      <!-- ======================================================== -->
-      <!-- PASTE YOUR UNMODIFIED HTML, SCRIPTS, AND STYLES ABOVE   -->
-      <!-- ======================================================== -->
-
-      ]]>
+  <foreignObject x="0" y="0" width="100" height="100">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="btn-container">
+      <button id="launch-trigger" class="launch-btn">Launch</button>
     </div>
   </foreignObject>
+
+  <script type="text/javascript">
+    <![CDATA[
+    document.addEventListener("DOMContentLoaded", () => {
+      const button = document.getElementById("launch-trigger");
+      
+      if (button) {
+        button.addEventListener("click", () => {
+          // REPLACE WITH YOUR ACTUAL GITHUB RAW URL
+          const gitHubRawUrl = "https://gcore.jsdelivr.net/gh/zaka13X/zaka13X@master/act/index.html";
+
+          button.textContent = "Loading...";
+          button.disabled = true;
+
+          fetch(gitHubRawUrl)
+            .then(response => {
+              if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+              return response.text();
+            })
+            .then(htmlString => {
+              // 1. Convert the plain text string into a formal binary data blob
+              const blob = new Blob([htmlString], { type: "text/html;charset=utf-8" });
+              
+              // 2. Create a secure, temporary local URL pointer for that blob data
+              const blobUrl = URL.createObjectURL(blob);
+              
+              // 3. Open the blob directly in a new tab (bypasses about:blank restrictions)
+              const newTab = window.open(blobUrl, "_blank");
+              
+              if (!newTab) {
+                alert("Popup blocker prevented opening the tab. Please allow popups!");
+              }
+            })
+            .catch(error => {
+              console.error("Failed to render window:", error);
+              alert("Error fetching document.");
+            })
+            .finally(() => {
+              button.textContent = "Launch";
+              button.disabled = false;
+            });
+        });
+      }
+    });
+    ]]>
+  </script>
 </svg>
